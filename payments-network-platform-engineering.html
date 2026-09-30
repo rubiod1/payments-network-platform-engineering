@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redeban · Plataforma de autoservicio sobre AWS — Proyecto Integrador #1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --ink:#0D2138;
+  --ink-soft:#4A5B6D;
+  --rule:#0D2138;
+  --rule-soft:#D5DCE4;
+  --panel:#F3F6F9;
+  --cyan:#0A7894;
+  --cyan-tint:#E3F3F7;
+  --amber:#A96A06;
+  --amber-tint:#FBF1DE;
+  --alert:#A83A2B;
+  --alert-tint:#F8E6E2;
+  --ok:#2F7A55;
+  /* diagramas: plano técnico azul */
+  --d-bg:#0D2138;
+  --d-box:#132E4C;
+  --d-line:#56D6E8;
+  --d-amber:#F4B740;
+  --d-text:#E8F1F7;
+  --d-soft:#9DB2C6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased}
+::selection{background:var(--cyan);color:#fff}
+h1,h2,h3,h4{font-family:'Archivo',system-ui,sans-serif;color:var(--ink);margin:0}
+p{margin:0}
+p+p{margin-top:.9em}
+a{color:var(--cyan)}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+strong{font-weight:600}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+.container{max-width:840px;margin:0 auto;padding:0 26px}
+.wide{max-width:1160px;margin:0 auto;padding:0 26px}
+
+/* ── portada ─────────────────────────── */
+.portada{padding:64px 0 0}
+.kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--cyan);letter-spacing:.02em}
+.portada h1{font-weight:800;font-size:clamp(34px,6vw,62px);line-height:1.03;letter-spacing:-.025em;margin:18px 0 0;max-width:19ch}
+.bajada{margin-top:22px;font-size:18px;color:var(--ink-soft);max-width:60ch;line-height:1.55}
+
+.cadena{margin-top:44px}
+.cadena-tit{font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:var(--ink-soft);margin-bottom:10px}
+.barra{display:flex;height:60px;border:2px solid var(--ink);overflow:hidden}
+.seg{display:flex;align-items:center;justify-content:center;text-align:center;padding:0 6px;font-family:'Archivo',sans-serif;font-size:12.5px;font-weight:600;line-height:1.15;border-right:2px solid var(--ink)}
+.seg:last-child{border-right:0}
+.seg.espera{background:var(--alert);color:#FFF4F1}
+.seg.espera.e2{background:#BD5344}
+.seg.espera.e3{background:#CC6C5D}
+.seg.trabajo{background:var(--ok);color:#EFFAF4;flex:0 0 8%}
+.barra.nueva{height:44px;margin-top:10px;border-color:var(--cyan)}
+.barra.nueva .seg{border-right-color:var(--cyan)}
+.seg.auto{background:var(--cyan-tint);color:var(--cyan)}
+.seg.auto.cod{background:var(--ok);color:#EFFAF4}
+.pie-barra{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;margin-top:10px;font-size:14px;color:var(--ink-soft)}
+.pie-barra b{color:var(--ink)}
+
+.meta{display:flex;flex-wrap:wrap;margin-top:40px;border-top:6px solid var(--ink);border-bottom:1px solid var(--rule-soft)}
+.meta>div{flex:1 1 180px;padding:16px 16px 16px 0;margin-right:16px;border-right:1px solid var(--rule-soft)}
+.meta>div:last-child{border-right:0}
+.meta .k{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);margin-bottom:4px}
+.meta .v{font-family:'Archivo',sans-serif;font-weight:600;font-size:14.5px}
+.integrantes{padding:16px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+.integrantes .k{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);display:block;margin-bottom:6px}
+
+/* ── índice ─────────────────────────── */
+.indice{padding-top:36px;padding-bottom:56px}
+.indice .k{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);display:block;margin-bottom:14px}
+.indice ol{list-style:none;margin:0;padding:0}
+.indice li{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:baseline;padding:15px 0;border-top:1px solid var(--ink)}
+.indice li:last-child{border-bottom:1px solid var(--ink)}
+.indice .n{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;color:var(--cyan)}
+.indice a{text-decoration:none;color:var(--ink);font-family:'Archivo',sans-serif;font-weight:700;font-size:17px}
+.indice a:hover{color:var(--cyan)}
+.indice .d{display:block;color:var(--ink-soft);font-size:13.5px;margin-top:2px}
+
+/* ── secciones ─────────────────────────── */
+section.seccion{position:relative;padding:64px 0 56px;border-top:6px solid var(--ink);overflow:hidden}
+.numeral{position:absolute;top:10px;right:26px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(100px,17vw,200px);line-height:1;color:var(--cyan-tint);pointer-events:none;user-select:none;z-index:0}
+.seccion>.container,.seccion>.wide{position:relative;z-index:1}
+.sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--cyan);margin-bottom:10px}
+.seccion h2{font-weight:800;font-size:clamp(26px,3.8vw,38px);line-height:1.1;letter-spacing:-.015em;max-width:24ch}
+.entrada{margin-top:20px;font-size:17px;color:var(--ink-soft);max-width:64ch}
+.bloque{margin-top:52px}
+.bloque h3{font-weight:700;font-size:22px;letter-spacing:-.01em;padding-top:18px;border-top:2px solid var(--ink)}
+.bloque h3 .req{display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:var(--amber);margin-bottom:6px}
+.bloque>p,.bloque>.prosa{margin-top:14px;max-width:66ch}
+h4{font-size:16px;font-weight:700}
+
+/* cajas */
+.caja{border:2px solid var(--ink);padding:18px 22px;margin:26px 0;max-width:68ch}
+.caja .lbl{display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;color:var(--cyan);margin-bottom:8px}
+.caja p{font-size:15px}
+.caja.acento{border-color:var(--cyan);background:var(--cyan-tint)}
+.caja.ambar{border-color:var(--amber);background:var(--amber-tint)}
+.caja.ambar .lbl{color:var(--amber)}
+.caja.alerta{border-color:var(--alert);background:var(--alert-tint)}
+.caja.alerta .lbl{color:var(--alert)}
+
+/* tres columnas simples */
+.tres{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:24px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.tres>div{padding:16px 18px 16px 0;border-right:1px solid var(--rule-soft)}
+.tres>div+div{padding-left:18px}
+.tres>div:last-child{border-right:0}
+.tres h4{margin-bottom:6px}
+.tres p{font-size:14px;color:var(--ink-soft)}
+.tres .sel{background:var(--cyan-tint)}
+.tres .sel h4{color:var(--cyan)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:22px}
+.dos h4{margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.dos ul{margin:0;padding-left:18px;font-size:14.5px}
+.dos li+li{margin-top:6px}
+.dos .fuera h4{border-color:var(--rule-soft);color:var(--ink-soft)}
+.dos .fuera li{color:var(--ink-soft)}
+@media(max-width:760px){.tres,.dos{grid-template-columns:1fr}.tres>div{border-right:0;border-bottom:1px solid var(--rule-soft);padding-left:0!important}}
+
+/* fricciones */
+.fricciones{list-style:none;margin:26px 0 0;padding:0}
+.fricciones>li{border-top:2px solid var(--ink);padding:22px 0}
+.fricciones>li:last-child{border-bottom:2px solid var(--ink)}
+.f-cab{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
+.f-id{font-family:'Archivo',sans-serif;font-weight:800;font-size:24px;color:var(--alert);flex:none}
+.f-cab h4{font-size:17.5px;flex:1 1 300px}
+.f-imp{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);flex:none}
+.f-imp b{color:var(--ink)}
+.fricciones p{font-size:15px;max-width:66ch}
+.evid{margin-top:12px;padding:10px 14px;border-left:3px solid var(--amber);background:var(--amber-tint);font-size:14px;max-width:66ch}
+.evid b{color:var(--amber)}
+.gob .f-id{color:var(--ink-soft)}
+
+/* tablas */
+.tabla{overflow-x:auto;margin:26px 0;border:2px solid var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+caption{caption-side:top;text-align:left;padding:11px 14px;background:var(--ink);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:12px}
+th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule-soft)}
+th{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;background:var(--panel);border-bottom:2px solid var(--ink)}
+td:first-child{font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:'IBM Plex Mono',monospace;text-align:center}
+tr.grupo td{background:var(--ink);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500}
+tr.destacada td{background:var(--cyan-tint)}
+.et{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border:1.5px solid currentColor;white-space:nowrap}
+.et.poc{color:var(--cyan)}
+.et.dis{color:var(--ink-soft)}
+.et.fut{color:var(--amber)}
+.et.no{color:var(--alert)}
+.et.si{color:var(--ok)}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);margin-top:26px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.kpis>div{padding:16px 14px 16px 0;border-right:1px solid var(--rule-soft)}
+.kpis>div+div{padding-left:14px}
+.kpis>div:last-child{border-right:0}
+.kpis .v{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:21px;line-height:1.15;color:var(--cyan)}
+.kpis .l{display:block;font-size:13px;color:var(--ink-soft);margin-top:6px}
+@media(max-width:820px){.kpis{grid-template-columns:1fr 1fr}.kpis>div{border-right:0;border-bottom:1px solid var(--rule-soft);padding-left:0!important}}
+
+/* riesgos / listas enumeradas simples */
+.lista-l{list-style:none;margin:22px 0 0;padding:0;max-width:70ch}
+.lista-l li{padding:14px 0;border-top:1px solid var(--rule-soft);font-size:15px}
+.lista-l li:last-child{border-bottom:1px solid var(--rule-soft)}
+.lista-l b{display:block;font-family:'Archivo',sans-serif;font-size:16px;margin-bottom:3px}
+
+/* figuras */
+figure.fig{margin:32px 0 0}
+figure.fig svg{display:block;width:100%;height:auto;background:var(--d-bg)}
+figcaption{margin-top:10px;font-size:13.5px;color:var(--ink-soft);max-width:80ch}
+figcaption b{color:var(--ink)}
+
+/* pasos (secuencia real) */
+.pasos{list-style:none;counter-reset:p;margin:26px 0 0;padding:0}
+.pasos li{counter-increment:p;display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--rule-soft)}
+.pasos li:last-child{border-bottom:1px solid var(--rule-soft)}
+.pasos li::before{content:counter(p);font-family:'Archivo',sans-serif;font-weight:800;font-size:26px;line-height:1;color:var(--cyan)}
+.pasos h4{margin-bottom:4px}
+.pasos p{font-size:14.5px;color:var(--ink-soft);max-width:64ch}
+.pasos .herr{display:inline-block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber)}
+
+/* código */
+details.codigo{margin-top:14px;border:2px solid var(--ink)}
+details.codigo summary{cursor:pointer;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details.codigo summary::-webkit-details-marker{display:none}
+details.codigo summary::after{content:"Ver";color:var(--cyan);font-weight:500}
+details.codigo[open] summary::after{content:"Ocultar"}
+details.codigo summary .ds{font-family:'IBM Plex Sans',sans-serif;font-weight:400;color:var(--ink-soft)}
+pre{margin:0;padding:16px 18px;background:var(--d-bg);color:var(--d-text);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.6;overflow-x:auto}
+pre .c{color:var(--d-soft)}
+pre .k{color:var(--d-line)}
+pre .s{color:var(--d-amber)}
+
+.cita{font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(22px,3vw,28px);line-height:1.3;letter-spacing:-.01em;border-top:6px solid var(--ink);padding-top:28px;margin-top:48px;max-width:28ch}
+
+footer{border-top:6px solid var(--ink);padding:28px 0 64px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft)}
+footer .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ── modo presentación ─────────────────────────── */
+.control{position:fixed;right:18px;bottom:18px;z-index:50;display:flex;gap:8px;align-items:center}
+.control button{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600;border:2px solid var(--ink);background:#fff;color:var(--ink);padding:8px 12px;cursor:pointer}
+.control button:hover{background:var(--ink);color:#fff}
+.control .pos{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--ink);color:#fff;padding:9px 12px;display:none}
+body.presentando .control .pos{display:block}
+body.presentando{font-size:18px}
+body.presentando [data-parada]{scroll-margin-top:28px}
+body.presentando .portada{min-height:100vh}
+body.presentando .ayuda{display:block}
+.ayuda{display:none;position:fixed;left:18px;bottom:18px;z-index:50;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);background:#fff;border:1px solid var(--rule-soft);padding:6px 10px}
+.parada-activa{outline:none}
+
+@media print{
+  .control,.ayuda{display:none}
+  section.seccion{break-before:page}
+  figure.fig,.caja,.tabla,.kpis,.fricciones>li,.pasos li{break-inside:avoid}
+  details.codigo{break-inside:avoid}
+  details.codigo:not([open]) pre{display:none}
+  .numeral{color:#EEF6F8}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media(max-width:600px){.meta>div{flex-basis:100%;border-right:0;margin-right:0}.seg{font-size:10.5px}.barra{height:70px}}
+
+
+/* ── carrera animada ─────────────────────────── */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.carrera{margin-top:44px;background:#0D2138;color:#E8F1F7;padding:20px 24px 18px;width:min(1180px,calc(100vw - 32px));position:relative;left:50%;transform:translateX(-50%)}
+.c-cab{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.c-reloj{display:flex;flex-direction:column}
+.c-k{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9DB2C6}
+.c-hora{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:clamp(26px,4vw,40px);line-height:1.05;font-variant-numeric:tabular-nums;color:#fff}
+.c-vel{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#0D2138;background:#F4B740;padding:4px 9px;transition:background .3s}
+.c-vel.lento{background:#56D6E8}
+.c-btn{margin-left:auto;display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;background:#56D6E8;color:#0D2138;border:0;padding:11px 18px 11px 15px;cursor:pointer}
+.c-btn:hover{background:#fff}
+.c-btn:focus-visible{outline:3px solid #F4B740;outline-offset:3px}
+.c-btn .cuenta{font-family:'IBM Plex Mono',monospace;font-weight:600}
+.c-btn .ico{width:0;height:0;border-left:12px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent}
+.c-btn.pausa .ico{width:12px;height:14px;border:0;border-left:4px solid currentColor;border-right:4px solid currentColor}
+.c-btn.otra .ico{width:14px;height:14px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%}
+.c-lienzo{margin-top:12px}
+.c-lienzo svg{display:block;width:100%;height:auto}
+#c-svg .via-t{fill:none;stroke:rgba(255,122,99,.22);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+#c-svg .via-t-on{fill:none;stroke:#FF7A63;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+#c-svg .via-g{fill:none;stroke:rgba(86,214,232,.25);stroke-width:7;stroke-linecap:round}
+#c-svg .via-g-on{fill:none;stroke:#56D6E8;stroke-width:7;stroke-linecap:round}
+#c-svg .via-g-glow{fill:none;stroke:#56D6E8;stroke-width:14;opacity:.12;filter:url(#brillo)}
+#c-svg .c-ruta{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600}
+#c-svg .r-t{fill:#FF7A63}#c-svg .r-g{fill:#56D6E8}
+#c-svg .c-lbl{font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;fill:#E8F1F7}
+#c-svg .c-lbl.g{font-size:11.5px;fill:#BFEFF6}
+#c-svg .c-dw{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;fill:#FF7A63}
+#c-svg .c-mini{font-family:'IBM Plex Mono',monospace;font-size:10.5px;fill:#9DB2C6}
+#c-svg .est-origen{fill:#0D2138;stroke:#fff;stroke-width:4}
+#c-svg .est .nodo{fill:#0D2138;stroke-width:4}
+#c-svg .est.t .nodo{stroke:#FF7A63}
+#c-svg .est.g .nodo{stroke:#56D6E8}
+#c-svg .est.hecha.t .nodo{fill:#FF7A63}
+#c-svg .est.hecha.g .nodo{fill:#56D6E8}
+#c-svg .pulso{fill:none;stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+#c-svg .est.t .pulso{stroke:#FF7A63}#c-svg .est.g .pulso{stroke:#56D6E8}
+#c-svg .est.espera .pulso{animation:pulso 1.3s ease-out infinite}
+@keyframes pulso{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(3.2)}}
+#c-svg #cola rect{fill:#FF7A63;opacity:.85;transition:opacity .25s}
+#c-svg #cola rect.ido{opacity:.1}
+#c-svg #aprob circle{fill:none;stroke:#9DB2C6;stroke-width:2}
+#c-svg #aprob circle.ok{fill:#FF7A63;stroke:#FF7A63}
+#c-svg #tk rect{fill:#FF7A63}#c-svg #tk .muesca{fill:#0D2138}
+#c-svg #tk text{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;fill:#2A0E08}
+#c-svg #gk{fill:#fff;stroke:#56D6E8;stroke-width:3}#c-svg #gk-glow{fill:#56D6E8;opacity:.8}
+#c-svg .git-base{stroke:#56D6E8;stroke-width:3;opacity:.5}
+#c-svg .git-l{fill:none;stroke:#5EE0A0;stroke-width:2.5}
+#c-svg .git-n{fill:#0D2138;stroke:#5EE0A0;stroke-width:2.5;transform-box:fill-box;transform-origin:center}
+#c-svg .git-n.nuevo{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+#c-svg .onda{fill:none;stroke:#56D6E8;stroke-width:3;opacity:0}
+#c-svg #boom.on .o1{animation:onda 1.1s ease-out}
+#c-svg #boom.on .o2{animation:onda 1.1s .15s ease-out}
+#c-svg #boom.on .o3{animation:onda 1.1s .3s ease-out}
+@keyframes onda{0%{opacity:1;r:10}100%{opacity:0;r:120}}
+#c-svg .chispa{fill:#F4B740;opacity:0}
+#c-svg #boom.on .chispa{animation:chispa .9s ease-out forwards}
+@keyframes chispa{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--dx),var(--dy))}}
+#c-svg #boom-txt{opacity:0;transition:opacity .3s}
+#c-svg #boom-txt.on{opacity:1}
+#c-svg .c-boom{font-family:'Archivo',sans-serif;font-weight:800;font-size:40px;fill:#fff}
+#c-svg .c-boom-s{font-family:'IBM Plex Mono',monospace;font-size:12.5px;fill:#56D6E8}
+#c-svg .c-cnum{font-family:'Archivo',sans-serif;font-weight:800;font-size:56px;fill:#5EE0A0}
+#c-svg #c-commits,#c-svg #c-cl{opacity:0;transition:opacity .4s}
+#c-svg.con-git #c-commits,#c-svg.con-git #c-cl{opacity:1}
+#c-svg .c-narr{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;fill:#56D6E8}
+#c-svg .c-velo{font-family:'Archivo',sans-serif;font-weight:800;font-size:34px;fill:#fff}
+#c-svg .c-velo-s{font-family:'IBM Plex Mono',monospace;font-size:15px;fill:#56D6E8}
+#c-svg #velo{transition:opacity .5s}
+#c-svg #velo.ido{opacity:0;pointer-events:none}
+.c-linea{margin-top:10px}
+.c-linea input{width:100%;accent-color:#56D6E8;cursor:pointer}
+.c-final{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(157,178,198,.3);opacity:0;transform:translateY(8px);transition:opacity .6s,transform .6s}
+.carrera.fin .c-final{opacity:1;transform:none}
+.c-final .v{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(26px,4vw,40px);line-height:1}
+.c-final .rojo{color:#FF7A63}.c-final .cian{color:#56D6E8}.c-final .verde{color:#5EE0A0}
+.c-final .l{display:block;margin-top:6px;font-size:13px;color:#BFD0DE}
+.c-nota{margin-top:12px;font-size:12px;color:#9DB2C6;max-width:90ch}
+@media(max-width:700px){.c-final{grid-template-columns:1fr}.carrera{padding:14px}}
+@media print{.c-linea,.c-btn{display:none}.c-final{opacity:1}#c-svg #velo{display:none}}
+
+/* estilos de texto dentro de los SVG */
+.dg .t{font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;fill:var(--d-text)}
+.dg .tb{font-family:'Archivo',sans-serif;font-size:16px;font-weight:700;fill:var(--d-text)}
+.dg .ts{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:var(--d-soft)}
+.dg .tc{font-family:'IBM Plex Mono',monospace;font-size:11.5px;fill:var(--d-line)}
+.dg .ta{font-family:'IBM Plex Mono',monospace;font-size:11.5px;fill:var(--d-amber)}
+.dg .tl{font-family:'Archivo',sans-serif;font-size:12px;font-weight:700;fill:var(--d-line);letter-spacing:.04em}
+.dg .b{fill:var(--d-box);stroke:var(--d-line);stroke-width:1.5}
+.dg .bd{fill:var(--d-box);stroke:var(--d-soft);stroke-width:1.2;stroke-dasharray:5 4}
+.dg .bf{fill:none;stroke:var(--d-amber);stroke-width:1.3;stroke-dasharray:6 4}
+.dg .ba{fill:#2A2A1E;stroke:var(--d-amber);stroke-width:1.6}
+.dg .zona{fill:none;stroke:rgba(157,178,198,.35);stroke-width:1.2}
+.dg .zonac{fill:rgba(86,214,232,.05);stroke:var(--d-line);stroke-width:1.2;stroke-dasharray:3 3}
+.dg .l{stroke:var(--d-line);stroke-width:1.6;fill:none}
+.dg .ld{stroke:var(--d-line);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+.dg .la{stroke:var(--d-amber);stroke-width:1.6;fill:none}
+.dg .lad{stroke:var(--d-amber);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+.dg .lg{stroke:rgba(157,178,198,.28);stroke-width:1;fill:none}
+</style>
+</head>
+<body>
+
+<header class="portada" data-parada="Portada">
+  <div class="container">
+    <div class="kicker">ARTI-4219 Arquitectura de Plataformas · Proyecto Integrador #1</div>
+    <h1>Ningún equipo de Redeban puede crear un recurso sin abrir un ticket.</h1>
+    <p class="bajada">Diagnóstico, arquitectura de referencia, ecosistema de APIs y primer Golden Path de una plataforma interna sobre AWS, operada con GitOps (Argo CD) y Crossplane.</p>
+
+    <div class="carrera" id="carrera" aria-label="Carrera animada entre el flujo por ticket y el Golden Path">
+      <div class="c-cab">
+        <div class="c-reloj"><span class="c-k">Reloj hábil</span><span class="c-hora" id="c-hora">Lun 08:00</span></div>
+        <span class="c-vel" id="c-vel">tiempo real</span>
+        <button type="button" class="c-btn" id="c-btn"><span class="ico" aria-hidden="true"></span><span class="txt">Iniciar</span></button>
+      </div>
+      <div class="c-lienzo">
+        <svg id="c-svg" viewBox="0 0 1200 500" role="img" aria-label="Dos rutas desde 'necesito un servicio nuevo': una larga por ticket y una corta por el Golden Path que luego genera commits">
+          <defs>
+            <filter id="brillo" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="brillo2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+          </defs>
+          <rect width="1200" height="500" fill="#0D2138"/>
+
+          <!-- nombres de ruta -->
+          <text class="c-ruta r-t" x="40" y="262">Ruta por ticket</text>
+          <text class="c-ruta r-g" x="104" y="452">Golden Path</text>
+
+          <!-- ruta ticket -->
+          <path id="p-t" class="via-t" d="M80 300 L150 300 Q175 300 190 280 L215 245 Q233 220 262 220 L1010 220 Q1075 220 1075 165 Q1075 110 1010 110 L230 110"/>
+          <path id="p-t2" class="via-t-on" d="M80 300 L150 300 Q175 300 190 280 L215 245 Q233 220 262 220 L1010 220 Q1075 220 1075 165 Q1075 110 1010 110 L230 110"/>
+          <!-- ruta golden -->
+          <path class="via-g-glow" d="M80 300 L150 300 Q175 300 190 320 L215 360 Q232 390 262 390 L600 390"/>
+          <path id="p-g" class="via-g" d="M80 300 L150 300 Q175 300 190 320 L215 360 Q232 390 262 390 L600 390"/>
+          <path id="p-g2" class="via-g-on" d="M80 300 L150 300 Q175 300 190 320 L215 360 Q232 390 262 390 L600 390"/>
+
+          <!-- git graph -->
+          <line id="git-base" class="git-base" x1="615" y1="390" x2="615" y2="390"/>
+          <g id="git"></g>
+
+          <!-- estación de origen -->
+          <circle cx="80" cy="300" r="13" class="est-origen"/>
+          <text class="c-lbl" x="80" y="336" text-anchor="middle">Necesito un</text>
+          <text class="c-lbl" x="80" y="352" text-anchor="middle">servicio nuevo</text>
+
+          <!-- estaciones ticket -->
+          <g class="est t" id="s1" data-x="360" data-y="220"><circle class="pulso" cx="360" cy="220" r="10"/><circle class="nodo" cx="360" cy="220" r="9"/><text class="c-lbl" x="360" y="250" text-anchor="middle">Redactar ticket</text><text class="c-dw" x="360" y="268" text-anchor="middle"></text></g>
+          <g class="est t" id="s2" data-x="660" data-y="220"><circle class="pulso" cx="660" cy="220" r="10"/><circle class="nodo" cx="660" cy="220" r="9"/><text class="c-lbl" x="660" y="250" text-anchor="middle">Cola del proveedor</text><text class="c-dw" x="660" y="268" text-anchor="middle"></text></g>
+          <g class="est t" id="s3" data-x="880" data-y="110"><circle class="pulso" cx="880" cy="110" r="10"/><circle class="nodo" cx="880" cy="110" r="9"/><text class="c-lbl" x="880" y="86" text-anchor="middle">Aprobaciones</text><text class="c-dw" x="880" y="66" text-anchor="middle"></text></g>
+          <g class="est t" id="s4" data-x="560" data-y="110"><circle class="pulso" cx="560" cy="110" r="10"/><circle class="nodo" cx="560" cy="110" r="9"/><text class="c-lbl" x="560" y="86" text-anchor="middle">Provisión y ajustes</text><text class="c-dw" x="560" y="66" text-anchor="middle"></text></g>
+          <g class="est t fin" id="s5" data-x="230" data-y="110"><circle class="pulso" cx="230" cy="110" r="10"/><rect class="nodo" x="218" y="98" width="24" height="24" rx="4"/><text class="c-lbl" x="230" y="86" text-anchor="middle">BD lista</text><text class="c-dw" x="230" y="66" text-anchor="middle"></text></g>
+
+          <!-- detalles de espera -->
+          <g id="cola">
+            <rect x="606" y="168" width="18" height="11" rx="2"/><rect x="630" y="168" width="18" height="11" rx="2"/><rect x="654" y="168" width="18" height="11" rx="2"/><rect x="678" y="168" width="18" height="11" rx="2"/><rect x="702" y="168" width="18" height="11" rx="2"/>
+            <text class="c-mini" x="663" y="160" text-anchor="middle">tickets delante del tuyo</text>
+          </g>
+          <g id="aprob">
+            <circle cx="842" cy="150" r="7"/><circle cx="880" cy="150" r="7"/><circle cx="918" cy="150" r="7"/>
+            <text class="c-mini" x="842" y="174" text-anchor="middle">seg.</text><text class="c-mini" x="880" y="174" text-anchor="middle">arq.</text><text class="c-mini" x="918" y="174" text-anchor="middle">riesgo</text>
+          </g>
+          <text id="correos" class="c-mini" x="560" y="140" text-anchor="middle"></text>
+
+          <!-- estaciones golden -->
+          <g class="est g" id="g1" data-x="280" data-y="390"><circle class="pulso" cx="280" cy="390" r="8"/><circle class="nodo" cx="280" cy="390" r="7"/><text class="c-lbl g" x="280" y="420" text-anchor="middle">API Gateway</text><text class="c-mini" x="280" y="435" text-anchor="middle">entrada única</text></g>
+          <g class="est g" id="g2" data-x="345" data-y="390"><circle class="pulso" cx="345" cy="390" r="8"/><circle class="nodo" cx="345" cy="390" r="7"/><text class="c-lbl g" x="345" y="368" text-anchor="middle">Backstage</text><text class="c-mini" x="345" y="352" text-anchor="middle">4 campos</text></g>
+          <g class="est g" id="g3" data-x="410" data-y="390"><circle class="pulso" cx="410" cy="390" r="8"/><circle class="nodo" cx="410" cy="390" r="7"/><text class="c-lbl g" x="410" y="420" text-anchor="middle">PR en Git</text><text class="c-mini" x="410" y="435" text-anchor="middle">repo + manifiestos</text></g>
+          <g class="est g" id="g4" data-x="470" data-y="390"><circle class="pulso" cx="470" cy="390" r="8"/><circle class="nodo" cx="470" cy="390" r="7"/><text class="c-lbl g" x="470" y="368" text-anchor="middle">Argo CD</text><text class="c-mini" x="470" y="352" text-anchor="middle">infra + servicio</text></g>
+          <g class="est g" id="g5" data-x="530" data-y="390"><circle class="pulso" cx="530" cy="390" r="8"/><circle class="nodo" cx="530" cy="390" r="7"/><text class="c-lbl g" x="530" y="420" text-anchor="middle">Crossplane</text><text class="c-mini" x="530" y="435" text-anchor="middle">crea la RDS</text></g>
+          <g class="est g fin" id="g6" data-x="600" data-y="390"><circle class="pulso" cx="600" cy="390" r="10"/><rect class="nodo" x="589" y="379" width="22" height="22" rx="4"/><text class="c-lbl g" x="600" y="368" text-anchor="middle">Servicio listo</text><text class="c-mini" x="600" y="352" text-anchor="middle">ya corre y conecta</text></g>
+          <text id="g-narr" class="c-narr" x="660" y="318"></text>
+
+          <!-- explosión -->
+          <g id="boom" transform="translate(600 390)">
+            <circle class="onda o1" r="10"/><circle class="onda o2" r="10"/><circle class="onda o3" r="10"/>
+            <g id="chispas"></g>
+          </g>
+          <g id="boom-txt" transform="translate(660 312)"><text class="c-boom">10 min</text><text class="c-boom-s" y="24">servicio listo y conectado · 0 tickets</text></g>
+
+          <!-- contador de commits -->
+          <g id="c-commits" transform="translate(1150 470)"><text class="c-cnum" id="c-cnum" text-anchor="end">0</text><text class="c-cl" x="-4" y="18" text-anchor="end"></text></g>
+          <text class="c-mini" x="1150" y="488" text-anchor="end" id="c-cl">commits mientras el ticket espera</text>
+
+          <!-- fichas -->
+          <g id="tk"><rect x="-19" y="-10" width="38" height="20" rx="3"/><circle cx="-19" cy="0" r="3.5" class="muesca"/><circle cx="19" cy="0" r="3.5" class="muesca"/><text y="4" text-anchor="middle">#4821</text></g>
+          <circle id="gk-glow" r="14" filter="url(#brillo2)"/>
+          <circle id="gk" r="7"/>
+
+          <!-- velo inicial -->
+          <g id="velo"><rect width="1200" height="500" fill="rgba(13,33,56,.72)"/>
+            <text class="c-velo" x="600" y="204" text-anchor="middle">Dos equipos necesitan lo mismo:</text>
+            <text class="c-velo" x="600" y="248" text-anchor="middle" style="fill:#56D6E8">un servicio nuevo con su base de datos</text>
+            <text class="c-velo-s" x="600" y="292" text-anchor="middle">lunes, 8:00 a. m. · uno pide por ticket, el otro usa el Golden Path</text>
+          </g>
+        </svg>
+      </div>
+      <div class="c-linea">
+        <label for="c-rango" class="sr">Mover la línea de tiempo</label>
+        <input type="range" id="c-rango" min="0" max="1000" value="0">
+      </div>
+      <div class="c-final" id="c-final" aria-live="polite">
+        <div><span class="v rojo">3 d 4 h</span><span class="l">esperó el equipo del ticket, solo por la base de datos</span></div>
+        <div><span class="v cian">10 min</span><span class="l">esperó el equipo del Golden Path para tener un servicio</span></div>
+        <div><span class="v verde" id="f-commits">35 commits</span><span class="l">entregó ese equipo antes de que llegara el ticket</span></div>
+      </div>
+      <p class="c-nota">Tiempo en horas hábiles (días de 8 h). Los primeros 10 minutos corren en tiempo real y luego el reloj se acelera; un commit cada 48 minutos hábiles es una cadencia ilustrativa. Con las cuatro solicitudes de un servicio nuevo en serie, la espera por ticket sube a 12–16 días.</p>
+    </div>
+
+    <div class="meta">
+      <div><span class="k">Programa</span><span class="v">Maestría en Arquitecturas de TI · Uniandes</span></div>
+      <div><span class="k">Periodo</span><span class="v">2026-20 · Grupo 2</span></div>
+      <div><span class="k">Organización</span><span class="v">Redeban · red de pagos</span></div>
+      <div><span class="k">Nube y entrega</span><span class="v">AWS · GitOps con Argo CD</span></div>
+    </div>
+    <div class="integrantes"><span class="k">Integrantes</span>Daniel Rubio Sierra · Diego Latorre Carrasquilla · Andrés Felipe Suárez Moscoso · Maycol Alejandro Yate Estupiñán · Ruben Antonio Parra Medrano</div>
+  </div>
+
+  <nav class="indice container" aria-label="Contenido">
+    <span class="k">Contenido</span>
+    <ol>
+      <li><span class="n">I</span><div><a href="#s1">Diagnóstico socio-técnico y TVP</a><span class="d">Dónde se pierde el tiempo y qué resolvemos primero</span></div></li>
+      <li><span class="n">II</span><div><a href="#s2">Diseño arquitectónico: planos y vistas</a><span class="d">Referencia por capas, topología, red Zero-Trust, eventos y ciclo de vida</span></div></li>
+      <li><span class="n">III</span><div><a href="#s3">Ecosistema de APIs y Platform 2.0</a><span class="d">Auditoría, servicios del portal y qué entra de la era 2.0</span></div></li>
+      <li><span class="n">IV</span><div><a href="#s4">Prueba de concepto: el primer Golden Path</a><span class="d">«Microservicio con base de datos», manifiestos y evidencia</span></div></li>
+    </ol>
+  </nav>
+</header>
+<main>
+<section class="seccion" id="s1" data-parada="I · Diagnóstico">
+  <span class="numeral" aria-hidden="true">I</span>
+  <div class="container">
+    <div class="sec-lbl">Sección I</div>
+    <h2>Diagnóstico socio-técnico y estrategia de producto</h2>
+    <p class="entrada">Redeban procesa pagos electrónicos para bancos y comercios. Eso implica una operación regulada (PCI DSS y exigencias de la Superintendencia Financiera) y equipos de desarrollo internos que construyen sobre AWS. La infraestructura, en cambio, está tercerizada de extremo a extremo: un equipo que necesita un clúster, una base de datos o un permiso no lo diseña ni lo construye. Redacta una solicitud y espera.</p>
+
+    <div class="caja">
+      <span class="lbl">Confidencialidad</span>
+      <p>Nombres de proyectos, cuentas, repositorios y rangos IP se anonimizan, como autoriza la guía. Las cifras de espera y las calificaciones de impacto y esfuerzo son las que reporta y estima el equipo; no provienen de una medición formal.</p>
+    </div>
+
+    <div class="bloque" data-parada="I · Cómo clasificamos">
+      <h3><span class="req">Criterio</span>Qué carga puede absorber la plataforma</h3>
+      <p>Seguimos Team Topologies: solo la carga extraña es candidata a salir de los equipos. Cada fricción se calificó de 1 a 5 en cuatro ejes (frecuencia, equipos afectados, tiempo perdido por ocurrencia y riesgo operacional) y, por separado, en esfuerzo de mitigación.</p>
+      <div class="tres">
+        <div><h4>Intrínseca</h4><p>La complejidad propia del dominio de pagos. No se elimina: se acompaña con formación y buen diseño.</p></div>
+        <div><h4>Pertinente</h4><p>El esfuerzo que sí enseña algo útil sobre el producto, como entender el pipeline del propio servicio. Se protege.</p></div>
+        <div class="sel"><h4>Extraña</h4><p>Trámite, espera y repetición que no enseñan nada ni entregan valor. Es el objetivo de la plataforma.</p></div>
+      </div>
+    </div>
+
+    <div class="bloque" data-parada="I · Mapa de carga extraña">
+      <h3><span class="req">Mapeo de carga cognitiva extraña</span>Cinco fricciones observadas en la operación actual</h3>
+      <ol class="fricciones">
+        <li>
+          <div class="f-cab"><span class="f-id">F1</span><h4>Aprovisionamiento por ticket con operación tercerizada</h4><span class="f-imp">Impacto <b>18/20</b> · Esfuerzo 3</span></div>
+          <p>EKS, bases de datos relacionales y no relacionales, permisos y despliegues a producción se piden por ticket a un proveedor. El SLA contractual fija el tiempo de entrega, así que el equipo de producto no tiene ninguna palanca: ante un bloqueo solo puede esperar o escalar.</p>
+          <p>Los cuatro tipos de solicitud pesan parecido. Eso descarta un recurso problemático y confirma que la fricción está en el mecanismo. Tres o cuatro días es justo el rango que vuelve inviable esperar dentro de un sprint: el desarrollador pierde contexto, los equipos agrupan solicitudes para no pagar la espera dos veces y aparecen recursos zombis que nadie da de baja.</p>
+        </li>
+        <li>
+          <div class="f-cab"><span class="f-id">F3</span><h4>Sin reconciliación ni rollback automático</h4><span class="f-imp">Impacto <b>16/20</b> · Esfuerzo 2</span></div>
+          <p>Nada compara el estado declarado con el real. El drift se detecta tarde y se corrige a mano, y los rollbacks también son manuales. Es la pareja natural de F1: sin autoservicio, los cambios de emergencia se hacen por consola; sin reconciliación, esos cambios se quedan y el repositorio deja de ser la fuente de verdad.</p>
+        </li>
+        <li>
+          <div class="f-cab"><span class="f-id">F4</span><h4>Más de 300 APIs sin catálogo ni propietario visible</h4><span class="f-imp">Impacto <b>15/20</b> · Esfuerzo 4</span></div>
+          <p>Las APIs viven en una plataforma de gestión, pero nadie puede responder cuántas hay, de quién es cada una, cuáles siguen activas o qué versiones conviven. Saber si una capacidad ya existe depende de preguntar por chat a la persona correcta. La analítica tarda en cargar y obtener el consumo de una API suele ser manual.</p>
+        </li>
+        <li>
+          <div class="f-cab"><span class="f-id">F2</span><h4>Cadena de despliegue sin capa de abstracción</h4><span class="f-imp">Impacto <b>12/20</b> · Esfuerzo 4</span></div>
+          <p>Los despliegues corren sobre CodeBuild, CodePipeline y CloudFormation. La herramienta no es el problema; la falta de abstracción sí. Cada equipo mantiene su propio buildspec y sus plantillas, se copian entre repositorios y divergen. Cambiar el motor sin resolver la abstracción reproduciría el mismo problema con otro logo.</p>
+        </li>
+        <li class="gob">
+          <div class="f-cab"><span class="f-id">F5</span><h4>Apagado de ambientes desigual y sin medición de Green IT</h4><span class="f-imp">Impacto <b>7/20</b> · Gobierno</span></div>
+          <p>Hay herramientas de apagado programado, pero su adopción es voluntaria y no existe un indicador comparable de consumo o desperdicio. No le quita tiempo al desarrollador; le cuesta dinero a la organización. Por eso se trata como asunto de gobierno y se evalúa en la Sección III.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="bloque" data-parada="I · Priorización">
+      <h3><span class="req">Priorización</span>Impacto compuesto frente a esfuerzo de mitigación</h3>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 900 450" role="img" aria-label="Matriz de impacto contra esfuerzo con las cinco fricciones">
+        <rect width="900" height="450" fill="#0D2138"/>
+        <!-- zona TVP -->
+        <rect x="90" y="40" width="481" height="108" fill="rgba(86,214,232,.08)" stroke="#56D6E8" stroke-dasharray="4 4"/>
+        <text class="tl" x="102" y="62">ENTRA EN LA TVP</text>
+        <text class="ts" x="102" y="80">alto impacto · esfuerzo moderado</text>
+        <!-- ejes -->
+        <line class="lg" x1="90" y1="400" x2="860" y2="400"/>
+        <line class="lg" x1="90" y1="40" x2="90" y2="400"/>
+        <line class="lg" x1="571" y1="40" x2="571" y2="400" stroke-dasharray="3 5"/>
+        <line class="lg" x1="90" y1="148" x2="860" y2="148" stroke-dasharray="3 5"/>
+        <g class="ts">
+          <text x="90" y="422" text-anchor="middle">1</text><text x="282" y="422" text-anchor="middle">2</text><text x="475" y="422" text-anchor="middle">3</text><text x="667" y="422" text-anchor="middle">4</text><text x="860" y="422" text-anchor="middle">5</text>
+          <text x="80" y="404" text-anchor="end">0</text><text x="80" y="224" text-anchor="end">10</text><text x="80" y="152" text-anchor="end">14</text><text x="80" y="44" text-anchor="end">20</text>
+        </g>
+        <text class="ts" x="475" y="442" text-anchor="middle">esfuerzo de mitigación (1 bajo · 5 alto)</text>
+        <text class="ts" x="28" y="220" transform="rotate(-90 28 220)" text-anchor="middle">impacto compuesto /20</text>
+        <text class="ta" x="848" y="62" text-anchor="end">SEMILLA · SECCIÓN III</text>
+        <text class="ts" x="848" y="390" text-anchor="end">segunda ola o gobierno</text>
+        <!-- puntos -->
+        <circle cx="475" cy="76" r="11" fill="#56D6E8"/><text class="t" x="494" y="81">F1 · Ticket 18</text>
+        <circle cx="282" cy="112" r="11" fill="#56D6E8"/><text class="t" x="301" y="117">F3 · Sin reconciliación 16</text>
+        <circle cx="667" cy="130" r="11" fill="#F4B740"/><text class="t" x="686" y="135">F4 · APIs 15</text>
+        <circle cx="667" cy="184" r="10" fill="none" stroke="#9DB2C6" stroke-width="2"/><text class="t" x="686" y="189" style="fill:#9DB2C6">F2 · Despliegue 12</text>
+        <circle cx="475" cy="274" r="10" fill="none" stroke="#9DB2C6" stroke-width="2"/><text class="t" x="494" y="279" style="fill:#9DB2C6">F5 · Green IT 7</text>
+        <path class="la" d="M300 104 Q380 60 462 72"/>
+        <text class="ta" x="310" y="54">mismo proyecto visto desde dos lados</text>
+      </svg>
+      <figcaption><b>Figura 1.</b> F1 y F3 caen juntas en la zona de la TVP. F4 tiene alto impacto pero esfuerzo alto: entra solo como semilla (registro automático en el catálogo) y se desarrolla en la Sección III.</figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <div class="tabla">
+      <table>
+        <caption>Calificación por eje (escala 1–5) · impacto = suma sobre 20</caption>
+        <thead><tr><th>Fricción</th><th>Frec.</th><th>Equipos</th><th>Tiempo</th><th>Riesgo</th><th>Impacto</th><th>Esfuerzo</th><th>Decisión</th></tr></thead>
+        <tbody>
+          <tr class="destacada"><td>F1 · Ticket</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">3</td><td class="num"><b>18</b></td><td class="num">3</td><td><span class="et poc">TVP</span></td></tr>
+          <tr class="destacada"><td>F3 · Reconciliación</td><td class="num">3</td><td class="num">5</td><td class="num">3</td><td class="num">5</td><td class="num"><b>16</b></td><td class="num">2</td><td><span class="et poc">TVP</span></td></tr>
+          <tr><td>F4 · APIs</td><td class="num">4</td><td class="num">5</td><td class="num">3</td><td class="num">3</td><td class="num"><b>15</b></td><td class="num">4</td><td><span class="et fut">Semilla · III</span></td></tr>
+          <tr><td>F2 · Despliegue</td><td class="num">3</td><td class="num">4</td><td class="num">3</td><td class="num">2</td><td class="num"><b>12</b></td><td class="num">4</td><td><span class="et dis">Segunda ola</span></td></tr>
+          <tr><td>F5 · Green IT</td><td class="num">2</td><td class="num">2</td><td class="num">1</td><td class="num">2</td><td class="num"><b>7</b></td><td class="num">3</td><td><span class="et no">Exclusión · III</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="caja acento">
+      <span class="lbl">La decisión que sostiene todo el proyecto</span>
+      <p>F1 y F3 no son dos proyectos. Un flujo declarativo que aprovisiona desde un repositorio elimina el ticket y, por construcción, deja el recurso bajo reconciliación continua. Resolverlos juntos cuesta menos que resolver cualquiera por separado.</p>
+    </div>
+
+    <div class="bloque" data-parada="I · TVP">
+      <h3><span class="req">Thinnest Viable Platform</span>Un microservicio con su base de datos, funcionando y sin ticket</h3>
+      <div class="caja acento">
+        <span class="lbl">La TVP en una frase</span>
+        <p>Un desarrollador de un equipo piloto llena un formulario de cuatro campos en Backstage y, en unos 10 minutos, recibe <strong>un microservicio ya corriendo y administrado desde Argo CD, con su repositorio, su namespace, su PostgreSQL, sus credenciales y su entrada en el catálogo</strong>. No abre ningún ticket ni pide que lo registren en el despliegue.</p>
+      </div>
+      <p>Los cuatro tipos de solicitud pesan igual, así que el primero se elige por viabilidad y no por frecuencia. Los permisos tocan el control de acceso que custodia el proveedor y producción queda fuera por definición. La base de datos relacional es la de resultado más visible y contrato más fácil de acotar: un motor, dos tamaños, un ambiente. Pero una base de datos sola sería un recurso sin dueño y sin dónde usarse, es decir, el mismo problema de F1 con otro nombre. Por eso el artefacto es el servicio completo, y nace dentro de Argo CD para que el equipo lo administre desde el primer commit.</p>
+
+      <div class="tabla">
+        <table>
+          <caption>El artefacto que recibe el desarrollador, pieza por pieza</caption>
+          <thead><tr><th>Pieza</th><th>Qué es</th><th>Qué reemplaza hoy</th></tr></thead>
+          <tbody>
+            <tr><td>Repositorio con microservicio esqueleto</td><td>Código base que ya sabe leer el Secret de la base, carpeta <code>deploy/</code> con sus manifiestos, pipeline de la aplicación y <code>catalog-info.yaml</code>.</td><td>Armar el repositorio y copiar plantillas de otro equipo.</td></tr>
+            <tr><td>Namespace del equipo</td><td>Espacio aislado en el clúster, con red y cuotas propias.</td><td>Ticket de espacio y permisos en el clúster.</td></tr>
+            <tr><td>PostgreSQL en RDS</td><td>Un motor, dos tamaños, cifrada, con respaldos y en subred privada.</td><td>Ticket de base de datos (F1).</td></tr>
+            <tr><td>Secret de conexión</td><td>Credenciales disponibles en el namespace, sin pasar por nadie.</td><td>Entrega manual de contraseñas.</td></tr>
+            <tr><td>Entrada en el catálogo</td><td>Dueño, repositorio y estado real de la base, visibles en el portal.</td><td>Preguntar por chat quién es dueño de qué (semilla de F4).</td></tr>
+            <tr><td>Servicio v0 en Argo CD</td><td>Una Application propia que despliega la carpeta <code>deploy/</code> del repositorio. Arranca con una imagen genérica de la plataforma que se conecta a la base y responde «conectado». El primer commit del desarrollador cambia la imagen por la suya.</td><td>Pedir que registren el servicio en el despliegue y comprobar a mano que conecta.</td></tr>
+            <tr><td>Infraestructura en Argo CD</td><td>Una segunda Application, editada solo por la plantilla, que sincroniza el namespace y la base desde el repositorio GitOps de la plataforma.</td><td>Cambios de infraestructura por consola, sin traza en Git (F3).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dos">
+        <div>
+          <h4>Dentro del alcance</h4>
+          <ul>
+            <li>Un único Golden Path: «microservicio con base de datos».</li>
+            <li>Un usuario: el desarrollador de un equipo stream-aligned piloto.</li>
+            <li>Un ambiente: desarrollo.</li>
+            <li>Una API interna con valores por defecto ya decididos: solo se elige el tamaño (pequeña o mediana).</li>
+            <li>Política de admisión: sin dueño, sin centro de costo o con tamaño no permitido, se rechaza.</li>
+            <li>Servicio administrado por Argo CD desde el día uno: dos Applications, una de infraestructura (solo la plantilla) y otra del servicio (el equipo).</li>
+            <li>Reconciliación continua y reversión automática del drift sobre todo lo que crea la plantilla (F3).</li>
+          </ul>
+        </div>
+        <div class="fuera">
+          <h4>Fuera del alcance por ahora</h4>
+          <ul>
+            <li>Construir imágenes: sigue siendo el pipeline actual del equipo (F2, segunda ola).</li>
+            <li>Automatizar el cambio del tag de la imagen: hoy lo hace un commit del desarrollador; Image Updater es segunda ola.</li>
+            <li>La lógica de negocio del servicio: la escribe el equipo.</li>
+            <li>Producción y la promoción entre ambientes.</li>
+            <li>Permisos y roles como recurso autoservido.</li>
+            <li>Bases no relacionales y clústeres nuevos por autoservicio.</li>
+            <li>Reemplazar CodePipeline y CloudFormation de los servicios existentes.</li>
+            <li>Migrar o documentar las más de 300 APIs actuales.</li>
+            <li>Monetización, cuotas, AI Gateway y tablero de Green IT.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div><span class="v">3–4 días → ≈10 min</span><span class="l">Del formulario al servicio corriendo en Argo CD</span></div>
+        <div><span class="v">0 tickets</span><span class="l">Al proveedor en el flujo cubierto</span></div>
+        <div><span class="v">100 %</span><span class="l">De lo que crea la plantilla, bajo reconciliación</span></div>
+        <div><span class="v">Sin operador</span><span class="l">Drift provocado y revertido solo</span></div>
+        <div><span class="v">Con dueño</span><span class="l">Todo servicio nuevo en el catálogo</span></div>
+      </div>
+    </div>
+
+    <div class="bloque" data-parada="I · Riesgos de la TVP">
+      <h3><span class="req">Lo que puede tumbar la TVP</span>Restricciones a resolver antes de construir</h3>
+      <ul class="lista-l">
+        <li><b>La cuenta de AWS es del proveedor.</b>El control plane necesita un rol con permisos acotados para crear recursos sin ticket, y ese permiso hoy vive del lado del tercero. Proponemos un alcance mínimo negociable: un tipo de recurso, un ambiente, un límite de tamaño y trazabilidad de cada creación.</li>
+        <li><b>El contrato puede desalinearse.</b>Si al proveedor se le paga por solicitud atendida, el autoservicio le reduce ingresos. El argumento es de reubicación: pasa de ejecutar solicitudes repetitivas a operar y auditar el control plane.</li>
+        <li><b>La plataforma necesita dueño.</b>Sin un equipo responsable, el repositorio se abandona en seis meses. Hay que nombrar quién la opera y quién decide la hoja de ruta.</li>
+        <li><b>El piloto debe querer serlo.</b>Se elige un equipo que ya sufre la espera y tiene un servicio nuevo por arrancar, no el que esté disponible.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section class="seccion" id="s2" data-parada="II · Diseño arquitectónico">
+  <span class="numeral" aria-hidden="true">II</span>
+  <div class="container">
+    <div class="sec-lbl">Sección II</div>
+    <h2>Diseño arquitectónico: planos y vistas</h2>
+    <p class="entrada">La arquitectura separa un plano de control, donde viven el portal, Git, Argo CD y Crossplane, de un plano de datos donde corren las cargas y los recursos de los equipos. Git es la única fuente de verdad: nadie crea infraestructura por consola, ni siquiera la plataforma.</p>
+
+    <div class="caja acento">
+      <span class="lbl">La frontera entre Terraform y Argo CD</span>
+      <p><strong>Terraform</strong> levanta los cimientos que cambian poco y existen antes que Kubernetes: VPC, EKS, roles IAM con Pod Identity para los controladores y la RDS de Backstage. <strong>Argo CD</strong> instala todo lo que vive dentro del clúster (Backstage, Istio, Crossplane, Kyverno, External Secrets) y reconcilia los recursos que piden los equipos, con el patrón <em>app of apps</em>. Así, lo que crea el Golden Path queda bajo reconciliación continua y no en un <code>terraform apply</code> manual.</p>
+    </div>
+
+    <div class="caja">
+      <span class="lbl">Argo CD gobierna los dos planos, con dos proyectos</span>
+      <p>Vive en el control plane y sincroniza todo, pero con permisos distintos. El proyecto <code>plataforma</code> escribe en los namespaces de la plataforma y solo lo alimenta el equipo plataforma. El proyecto <code>equipos</code> solo escribe en el namespace de cada equipo y solo tipos de recurso permitidos. Cada servicio tiene dos Applications: la de infraestructura (repositorio GitOps, editada por la plantilla) y la del servicio (su propio repositorio, editada por el equipo). Así el equipo administra su servicio sin poder tocar su base de datos ni la plataforma.</p>
+    </div>
+
+    <div class="bloque" data-parada="II · Arquitectura de referencia">
+      <h3><span class="req">Arquitectura de referencia general</span>Componentes por capa y por plano</h3>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 1120 730" role="img" aria-label="Arquitectura de referencia por capas">
+        <rect width="1120" height="730" fill="#0D2138"/>
+        <!-- bandas -->
+        <rect class="zona" x="190" y="50" width="740" height="140"/>
+        <rect class="zona" x="190" y="205" width="740" height="140"/>
+        <rect class="zona" x="190" y="360" width="740" height="140"/>
+        <rect class="zonac" x="190" y="530" width="740" height="150"/>
+        <rect class="zona" x="16" y="50" width="164" height="630"/>
+        <rect class="zona" x="940" y="50" width="164" height="630"/>
+        <text class="tl" x="202" y="72">DESARROLLADOR</text>
+        <text class="tl" x="202" y="227">INTEGRACIÓN Y ENTREGA</text>
+        <text class="tl" x="202" y="382">RECURSOS</text>
+        <text class="tl" x="202" y="552">PLANO DE DATOS · CARGAS DE LOS EQUIPOS</text>
+        <text class="tl" x="28" y="72">SEGURIDAD</text>
+        <text class="tl" x="952" y="72">OBSERVABILIDAD</text>
+        <line class="lad" x1="190" y1="515" x2="930" y2="515"/>
+        <text class="ta" x="560" y="510" text-anchor="middle">plano de control ↑   ↓ plano de datos</text>
+
+        <!-- fila 1 -->
+        <rect class="b" x="200" y="85" width="168" height="92"/><text class="t" x="214" y="113">Backstage</text><text class="ts" x="214" y="135">portal único</text><text class="ts" x="214" y="152">login GitHub OAuth</text>
+        <rect class="b" x="384" y="85" width="168" height="92"/><text class="t" x="398" y="113">Software Templates</text><text class="ts" x="398" y="135">Golden Path</text><text class="ts" x="398" y="152">microservicio + BD</text>
+        <rect class="b" x="568" y="85" width="168" height="92"/><text class="t" x="582" y="113">Catálogo + TechDocs</text><text class="ts" x="582" y="135">dueño, repo, ambiente</text><text class="ts" x="582" y="152">docs desde el repo</text>
+        <rect class="bd" x="752" y="85" width="168" height="92"/><text class="t" x="766" y="113">Catálogo de APIs</text><text class="ts" x="766" y="135">ingesta de OpenAPI</text><text class="ts" x="766" y="152">ver Sección III</text>
+        <!-- fila 2 -->
+        <rect class="b" x="200" y="240" width="168" height="92"/><text class="t" x="214" y="268">GitHub</text><text class="ts" x="214" y="290">repos de aplicación</text><text class="ts" x="214" y="307">repo GitOps plataforma</text>
+        <rect class="b" x="384" y="240" width="168" height="92"/><text class="t" x="398" y="268">Argo CD</text><text class="ts" x="398" y="290">app of apps</text><text class="ts" x="398" y="307">ApplicationSet</text>
+        <rect class="b" x="568" y="240" width="168" height="92"/><text class="t" x="582" y="268">API Gateway</text><text class="ts" x="582" y="290">VPC Link + NLB interno</text><text class="ts" x="582" y="307">portal y APIs internas</text>
+        <rect class="bd" x="752" y="240" width="168" height="92"/><text class="t" x="766" y="268">CodeBuild/Pipeline</text><text class="ts" x="766" y="290">se conserva</text><text class="ts" x="766" y="307">abstracción: 2.ª ola</text>
+        <!-- fila 3 -->
+        <rect class="b" x="200" y="395" width="168" height="92"/><text class="t" x="214" y="423">Crossplane v2</text><text class="ts" x="214" y="445">provider AWS (RDS)</text><text class="ts" x="214" y="462">reconcilia siempre</text>
+        <rect class="b" x="384" y="395" width="168" height="92"/><text class="t" x="398" y="423">Composiciones</text><text class="ts" x="398" y="445">API interna</text><text class="ts" x="398" y="462">PostgreSQLInstance</text>
+        <rect class="b" x="568" y="395" width="168" height="92"/><text class="t" x="582" y="423">Amazon EKS</text><text class="ts" x="582" y="445">clúster de plataforma</text><text class="ts" x="582" y="462">nodos gestionados</text>
+        <rect class="b" x="752" y="395" width="168" height="92"/><text class="t" x="766" y="423">Terraform</text><text class="ts" x="766" y="445">cimientos: VPC, EKS,</text><text class="ts" x="766" y="462">IAM, RDS de Backstage</text>
+        <!-- fila 4 -->
+        <rect class="b" x="200" y="570" width="168" height="96"/><text class="t" x="214" y="598">Namespaces</text><text class="ts" x="214" y="620">uno por equipo</text><text class="ts" x="214" y="637">cuotas y red propias</text>
+        <rect class="b" x="384" y="570" width="168" height="96"/><text class="t" x="398" y="598">Istio ambient</text><text class="ts" x="398" y="620">mTLS entre cargas</text><text class="ts" x="398" y="637">sin sidecars</text>
+        <rect class="b" x="568" y="570" width="168" height="96"/><text class="t" x="582" y="598">RDS PostgreSQL</text><text class="ts" x="582" y="620">una por servicio</text><text class="ts" x="582" y="637">subred de datos</text>
+        <rect class="b" x="752" y="570" width="168" height="96"/><text class="t" x="766" y="598">Servicio del equipo</text><text class="ts" x="766" y="620">Application propia</text><text class="ts" x="766" y="637">sync desde su repo</text>
+        <!-- seguridad -->
+        <rect class="b" x="26" y="85" width="144" height="100"/><text class="t" x="38" y="113">Kyverno</text><text class="ts" x="38" y="135">políticas de</text><text class="ts" x="38" y="152">admisión</text>
+        <rect class="b" x="26" y="200" width="144" height="100"/><text class="t" x="38" y="228">External</text><text class="t" x="38" y="246">Secrets</text><text class="ts" x="38" y="268">+ Secrets Manager</text>
+        <rect class="b" x="26" y="315" width="144" height="100"/><text class="t" x="38" y="343">Pod Identity</text><text class="ts" x="38" y="365">rol IAM mínimo</text><text class="ts" x="38" y="382">por controlador</text>
+        <rect class="b" x="26" y="430" width="144" height="100"/><text class="t" x="38" y="458">mTLS STRICT</text><text class="ts" x="38" y="480">AuthorizationPolicy</text><text class="ts" x="38" y="497">deny por defecto</text>
+        <rect class="bd" x="26" y="545" width="144" height="100"/><text class="t" x="38" y="573">IdP · CloudTrail</text><text class="ts" x="38" y="595">identidad y traza</text><text class="ts" x="38" y="612">de cada creación</text>
+        <!-- observabilidad -->
+        <rect class="b" x="950" y="85" width="144" height="100"/><text class="t" x="962" y="113">Argo CD</text><text class="t" x="962" y="131">Notifications</text><text class="ts" x="962" y="153">sync y salud</text>
+        <rect class="bd" x="950" y="200" width="144" height="100"/><text class="t" x="962" y="228">Prometheus</text><text class="ts" x="962" y="250">métricas de</text><text class="ts" x="962" y="267">controladores</text>
+        <rect class="bd" x="950" y="315" width="144" height="100"/><text class="t" x="962" y="343">Grafana</text><text class="ts" x="962" y="365">tablero del</text><text class="ts" x="962" y="382">Golden Path</text>
+        <rect class="bd" x="950" y="430" width="144" height="100"/><text class="t" x="962" y="458">CloudWatch</text><text class="ts" x="962" y="480">logs y métricas</text><text class="ts" x="962" y="497">de RDS y EKS</text>
+        <rect class="bf" x="950" y="545" width="144" height="100"/><text class="t" x="962" y="573" style="fill:#F4B740">OpenCost</text><text class="ts" x="962" y="595">costo por</text><text class="ts" x="962" y="612">namespace</text>
+        <!-- leyenda -->
+        <rect class="b" x="200" y="700" width="26" height="14"/><text class="ts" x="234" y="712">en la PoC</text>
+        <rect class="bd" x="330" y="700" width="26" height="14"/><text class="ts" x="364" y="712">diseñado, fuera de la PoC</text>
+        <rect class="bf" x="560" y="700" width="26" height="14"/><text class="ts" x="594" y="712">evolución futura</text>
+      </svg>
+      <figcaption><b>Figura 2.</b> Arquitectura de referencia sobre las cinco capas del curso. Seguridad y observabilidad cruzan todos los planos; la línea ámbar separa lo que decide la plataforma de lo que operan los equipos.</figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <div class="tabla">
+      <table>
+        <caption>Por qué cada pieza y en qué estado entra</caption>
+        <thead><tr><th>Capa</th><th>Tecnología</th><th>Por qué esa y no otra</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>Desarrollador</td><td>Backstage</td><td>Plantillas, catálogo y documentación en una sola superficie; el catálogo luego absorbe las APIs (F4).</td><td><span class="et poc">PoC</span></td></tr>
+          <tr><td>Integración</td><td>Argo CD</td><td>Reconciliación continua y detección de drift nativas, que es exactamente F3. CodePipeline no reconcilia. Administra la infraestructura del servicio y el servicio mismo, con dos proyectos.</td><td><span class="et poc">PoC</span></td></tr>
+          <tr><td>Recursos</td><td>Crossplane v2</td><td>La infraestructura se vuelve un objeto de Kubernetes: Argo CD la reconcilia igual que una aplicación. Una Composition es la API interna con los valores de Redeban.</td><td><span class="et poc">PoC</span></td></tr>
+          <tr><td>Recursos</td><td>Terraform</td><td>Solo cimientos. Evita el problema del huevo y la gallina: algo tiene que crear el clúster donde vive Argo CD.</td><td><span class="et poc">PoC</span></td></tr>
+          <tr><td>Seguridad</td><td>Kyverno</td><td>Políticas escritas en YAML, el mismo lenguaje de los manifiestos; menos curva que Rego para el equipo plataforma.</td><td><span class="et poc">PoC</span></td></tr>
+          <tr><td>Seguridad</td><td>Istio ambient</td><td>mTLS e identidad por carga para la historia Zero-Trust, sin el costo de memoria de un sidecar por pod en un clúster pequeño.</td><td><span class="et poc">PoC</span></td></tr>
+          <tr><td>Observabilidad</td><td>Prometheus y Grafana</td><td>Métricas de los controladores y del tiempo del Golden Path; en la PoC basta con Argo CD Notifications y CloudWatch.</td><td><span class="et dis">Diseñado</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bloque" data-parada="II · Vista física">
+      <h3><span class="req">Vista 1 · Ubicación de componentes físicos</span>Clúster de gestión frente a clústeres de aplicación</h3>
+      <p>El objetivo es una topología hub and spoke en cuentas separadas: el hub concentra el plano de control y los spokes solo alojan cargas y sus recursos. Si un spoke se compromete, no alcanza a la plataforma; si el hub cae, las aplicaciones siguen corriendo y solo se detiene el autoservicio.</p>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 1120 580" role="img" aria-label="Topología hub and spoke por cuentas">
+        <defs><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56D6E8"/></marker>
+        <marker id="m1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F4B740"/></marker></defs>
+        <rect width="1120" height="580" fill="#0D2138"/>
+        <rect class="zona" x="16" y="16" width="1088" height="470"/>
+        <text class="ts" x="30" y="38">AWS Organizations · cuentas anonimizadas</text>
+        <!-- hub -->
+        <rect class="zona" x="36" y="52" width="464" height="416" style="stroke:#56D6E8"/>
+        <text class="tb" x="52" y="80">Cuenta Plataforma · hub</text>
+        <rect class="zonac" x="56" y="96" width="424" height="248"/>
+        <text class="tc" x="70" y="118">EKS de gestión · plano de control</text>
+        <rect class="b" x="70" y="132" width="124" height="54"/><text class="t" x="82" y="164">Backstage</text>
+        <rect class="b" x="206" y="132" width="124" height="54"/><text class="t" x="218" y="164">Argo CD</text>
+        <rect class="b" x="342" y="132" width="124" height="54"/><text class="t" x="354" y="164">Crossplane</text>
+        <rect class="b" x="70" y="198" width="124" height="54"/><text class="t" x="82" y="230">Kyverno</text>
+        <rect class="b" x="206" y="198" width="124" height="54"/><text class="t" x="218" y="222">External</text><text class="t" x="218" y="240">Secrets</text>
+        <rect class="b" x="342" y="198" width="124" height="54"/><text class="t" x="354" y="230">Istio ingress</text>
+        <rect class="bd" x="70" y="264" width="260" height="62"/><text class="t" x="82" y="292">Prometheus · Grafana</text><text class="ts" x="82" y="311">métricas de la plataforma</text>
+        <rect class="b" x="342" y="264" width="124" height="62"/><text class="t" x="354" y="292">Notifications</text><text class="ts" x="354" y="311">de Argo CD</text>
+        <rect class="b" x="56" y="364" width="204" height="84"/><text class="t" x="70" y="392">RDS de Backstage</text><text class="ts" x="70" y="412">estado del portal</text><text class="ts" x="70" y="428">creada por Terraform</text>
+        <rect class="b" x="276" y="364" width="204" height="84"/><text class="t" x="290" y="392">Secrets Manager</text><text class="ts" x="290" y="412">origen de secretos</text><text class="ts" x="290" y="428">que sincroniza ESO</text>
+        <!-- spoke dev -->
+        <rect class="zona" x="640" y="52" width="444" height="262" style="stroke:#56D6E8"/>
+        <text class="tb" x="656" y="80">Cuenta Cargas · desarrollo (spoke)</text>
+        <rect class="zonac" x="660" y="96" width="404" height="112"/>
+        <text class="tc" x="674" y="118">EKS de aplicaciones</text>
+        <rect class="b" x="672" y="132" width="120" height="58"/><text class="t" x="684" y="157">ns piloto</text><text class="ts" x="684" y="176">+ Secret BD</text>
+        <rect class="bd" x="804" y="132" width="120" height="58"/><text class="t" x="816" y="157">ns equipo-b</text><text class="ts" x="816" y="176">siguiente</text>
+        <rect class="b" x="936" y="132" width="116" height="58"/><text class="t" x="948" y="157">Istio</text><text class="ts" x="948" y="176">ambient</text>
+        <rect class="b" x="660" y="224" width="194" height="72"/><text class="t" x="674" y="252">RDS del piloto</text><text class="ts" x="674" y="272">creada por Crossplane</text>
+        <rect class="b" x="870" y="224" width="194" height="72"/><text class="t" x="884" y="252">Subredes de datos</text><text class="ts" x="884" y="272">sin ruta a Internet</text>
+        <!-- prod -->
+        <rect class="bf" x="640" y="334" width="444" height="134"/>
+        <text class="tb" x="656" y="364" style="fill:#F4B740">Cuenta Cargas · producción</text>
+        <text class="ts" x="656" y="388">mismo patrón de spoke</text>
+        <text class="ts" x="656" y="406">fuera de la TVP; entra con el flujo</text>
+        <text class="ts" x="656" y="424">de promoción entre ambientes</text>
+        <!-- flechas -->
+        <path class="l" d="M500 160 H634" marker-end="url(#m1)"/>
+        <text class="tc" x="512" y="146">Argo CD sincroniza</text>
+        <text class="ts" x="512" y="180">API privada</text>
+        <path class="la" d="M500 260 C570 260 590 262 654 262" marker-end="url(#m1a)"/>
+        <text class="ta" x="510" y="246">Crossplane asume</text>
+        <text class="ts" x="510" y="290">un rol acotado</text>
+        <path class="ld" d="M570 300 V400 H634" marker-end="url(#m1)"/>
+        <text class="ts" x="512" y="446">otro rol IAM</text>
+        <!-- nota PoC -->
+        <rect class="ba" x="16" y="504" width="1088" height="60"/>
+        <text class="ta" x="32" y="530">EN LA PoC</text>
+        <text class="t" x="120" y="530">Un solo EKS en una cuenta. Hub y spoke se separan por namespaces, roles IAM distintos</text>
+        <text class="t" x="120" y="550">y un ApplicationSet por destino; la figura es la topología objetivo que se defiende.</text>
+      </svg>
+      <figcaption><b>Figura 3.</b> El hub no aloja cargas de negocio y los spokes no alojan controladores. La simplificación de la PoC se declara como decisión consciente por costo, no como diseño final.</figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <div class="bloque" data-parada="II · Vista de red">
+      <h3><span class="req">Vista 2 · Comunicación de red</span>Enrutamiento, VPC y políticas Zero-Trust</h3>
+      <p>Solo el API Gateway es público. Detrás, un VPC Link llega a un NLB interno y de ahí al Istio Ingress Gateway, que enruta al portal. Los controladores hablan con las APIs de AWS por endpoints privados, sin salir a Internet, y cada base de datos acepta tráfico solo del namespace que la pidió.</p>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 1120 620" role="img" aria-label="Vista de red y Zero-Trust">
+        <defs><marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56D6E8"/></marker>
+        <marker id="m2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F4B740"/></marker></defs>
+        <rect width="1120" height="620" fill="#0D2138"/>
+        <rect class="b" x="20" y="90" width="130" height="60"/><text class="t" x="34" y="116">Desarrollador</text><text class="ts" x="34" y="136">HTTPS · OIDC</text>
+        <rect class="b" x="180" y="80" width="150" height="80"/><text class="t" x="194" y="106">API Gateway</text><text class="ts" x="194" y="126">regional · WAF</text><text class="ts" x="194" y="143">único punto público</text>
+        <!-- VPC -->
+        <rect class="zona" x="380" y="30" width="720" height="380" style="stroke:#56D6E8"/>
+        <text class="tb" x="396" y="54">VPC plataforma · 10.0.0.0/16 (ejemplo)</text>
+        <rect class="zonac" x="400" y="68" width="480" height="202"/>
+        <text class="tc" x="412" y="86">subredes privadas de aplicación · 3 AZ</text>
+        <rect class="ba" x="350" y="95" width="80" height="50"/><text class="ta" x="362" y="116">VPC</text><text class="ta" x="362" y="132">Link</text>
+        <rect class="b" x="448" y="95" width="110" height="60"/><text class="t" x="460" y="121">NLB interno</text><text class="ts" x="460" y="140">TCP 443</text>
+        <rect class="b" x="574" y="95" width="120" height="60"/><text class="t" x="586" y="121">Istio Ingress</text><text class="ts" x="586" y="140">TLS · rutas</text>
+        <rect class="b" x="710" y="95" width="150" height="60"/><text class="t" x="722" y="121">Backstage</text><text class="ts" x="722" y="140">ns backstage</text>
+        <rect class="b" x="420" y="190" width="130" height="60"/><text class="t" x="432" y="216">ns piloto</text><text class="ts" x="432" y="235">carga del equipo</text>
+        <rect class="b" x="566" y="190" width="130" height="60"/><text class="t" x="578" y="216">Argo CD</text><text class="ts" x="578" y="235">ns argocd</text>
+        <rect class="b" x="712" y="190" width="148" height="60"/><text class="t" x="724" y="216">Crossplane</text><text class="ts" x="724" y="235">ns crossplane</text>
+        <rect class="zonac" x="400" y="290" width="480" height="104"/>
+        <text class="tc" x="866" y="308" text-anchor="end">subredes de datos · sin Internet</text>
+        <rect class="b" x="420" y="320" width="200" height="56"/><text class="t" x="432" y="344">RDS del piloto</text><text class="ts" x="432" y="363">SG: solo ns piloto</text>
+        <rect class="b" x="660" y="320" width="200" height="56"/><text class="t" x="672" y="344">RDS de Backstage</text><text class="ts" x="672" y="363">SG: solo ns backstage</text>
+        <rect class="b" x="900" y="68" width="182" height="202"/><text class="t" x="914" y="94">VPC endpoints</text>
+        <text class="ts" x="914" y="118">sts</text><text class="ts" x="914" y="136">rds</text><text class="ts" x="914" y="154">secretsmanager</text><text class="ts" x="914" y="172">ecr · logs</text><text class="ts" x="914" y="200">los controladores</text><text class="ts" x="914" y="217">no salen a Internet</text>
+        <!-- flechas -->
+        <path class="l" d="M150 120 H174" marker-end="url(#m2)"/>
+        <path class="l" d="M330 120 H344" marker-end="url(#m2)"/>
+        <path class="l" d="M430 120 H442" marker-end="url(#m2)"/>
+        <path class="l" d="M558 125 H568" marker-end="url(#m2)"/>
+        <path class="l" d="M694 125 H704" marker-end="url(#m2)"/>
+        <path class="l" d="M860 220 H894" marker-end="url(#m2)"/>
+        <path class="l" d="M485 250 V314" marker-end="url(#m2)"/>
+        <path class="ld" d="M860 125 H889 V348 H866" marker-end="url(#m2)"/>
+        <path class="la" d="M786 250 V264 H540 V314" marker-end="url(#m2a)" />
+        <text class="ta" x="560" y="280">crea y reconcilia</text>
+        <!-- reglas zero trust -->
+        <text class="tl" x="20" y="448">POLÍTICAS ZERO-TRUST ENTRE PLANOS</text>
+        <rect class="b" x="20" y="462" width="255" height="138"/><text class="t" x="34" y="490">Borde</text><text class="ts" x="34" y="512">solo API Gateway es público;</text><text class="ts" x="34" y="529">WAF y authorizer OIDC antes</text><text class="ts" x="34" y="546">de entrar a la VPC; el NLB</text><text class="ts" x="34" y="563">no tiene IP pública</text>
+        <rect class="b" x="295" y="462" width="255" height="138"/><text class="t" x="309" y="490">Malla</text><text class="ts" x="309" y="512">mTLS STRICT en toda la malla;</text><text class="ts" x="309" y="529">identidad SPIFFE por cuenta</text><text class="ts" x="309" y="546">de servicio, no por IP</text>
+        <rect class="b" x="570" y="462" width="255" height="138"/><text class="t" x="584" y="490">Namespace</text><text class="ts" x="584" y="512">NetworkPolicy deny-all y</text><text class="ts" x="584" y="529">AuthorizationPolicy explícita;</text><text class="ts" x="584" y="546">el plano de datos no puede</text><text class="ts" x="584" y="563">llamar al plano de control</text>
+        <rect class="b" x="845" y="462" width="255" height="138"/><text class="t" x="859" y="490">Datos y nube</text><text class="ts" x="859" y="512">SG de RDS por namespace;</text><text class="ts" x="859" y="529">Pod Identity: cada controlador</text><text class="ts" x="859" y="546">con un rol IAM mínimo;</text><text class="ts" x="859" y="563">cada creación en CloudTrail</text>
+      </svg>
+      <figcaption><b>Figura 4.</b> Es la cadena de entrada ya modulada en Terraform (API Gateway → VPC Link → NLB interno → Istio → Backstage) completada con la subred de datos, los endpoints privados y las cuatro capas de control. Rangos IP de ejemplo.</figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <div class="bloque" data-parada="II · Flujo de control y eventos">
+      <h3><span class="req">Vista 3 · Flujo de control y eventos asíncronos</span>Los planos no se llaman: se observan</h3>
+      <p>Ningún componente le ordena al siguiente qué hacer. Cada uno escribe un estado deseado y el siguiente reacciona cuando lo observa, como una cadena de montaje con tarjetas kanban: Backstage deja un commit, Argo CD lo ve por webhook, Crossplane ve el objeto nuevo en el clúster y AWS le devuelve estado en cada ciclo de reconciliación. Los metadatos (etiquetas, anotaciones y condiciones de estado) son el lenguaje común entre planos.</p>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 1120 610" role="img" aria-label="Diagrama de secuencia de control y eventos">
+        <defs><marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56D6E8"/></marker>
+        <marker id="m3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F4B740"/></marker></defs>
+        <rect width="1120" height="610" fill="#0D2138"/>
+        <g>
+          <rect class="b" x="15" y="20" width="120" height="40"/><text class="t" x="75" y="45" text-anchor="middle">Portal</text>
+          <rect class="b" x="150" y="20" width="120" height="40"/><text class="t" x="210" y="45" text-anchor="middle">GitHub</text>
+          <rect class="b" x="285" y="20" width="120" height="40"/><text class="t" x="345" y="45" text-anchor="middle">Argo CD</text>
+          <rect class="b" x="420" y="20" width="120" height="40"/><text class="t" x="480" y="45" text-anchor="middle">Kyverno</text>
+          <rect class="b" x="555" y="20" width="120" height="40"/><text class="t" x="615" y="45" text-anchor="middle">Crossplane</text>
+          <rect class="b" x="690" y="20" width="120" height="40"/><text class="t" x="750" y="45" text-anchor="middle">AWS RDS</text>
+          <rect class="b" x="825" y="20" width="120" height="40"/><text class="t" x="885" y="45" text-anchor="middle">Namespace</text>
+          <rect class="b" x="970" y="20" width="120" height="40"/><text class="t" x="1030" y="45" text-anchor="middle">Catálogo</text>
+        </g>
+        <g class="lg"><line x1="75" y1="60" x2="75" y2="590"/><line x1="210" y1="60" x2="210" y2="590"/><line x1="345" y1="60" x2="345" y2="590"/><line x1="480" y1="60" x2="480" y2="590"/><line x1="615" y1="60" x2="615" y2="590"/><line x1="750" y1="60" x2="750" y2="590"/><line x1="885" y1="60" x2="885" y2="590"/><line x1="1030" y1="60" x2="1030" y2="590"/></g>
+        <path class="l" d="M75 105 H204" marker-end="url(#m3)"/><text class="tc" x="84" y="97">1 repo + PR</text>
+        <path class="ld" d="M210 145 H339" marker-end="url(#m3)"/><text class="tc" x="219" y="137">2 webhook</text>
+        <path class="l" d="M345 185 H474" marker-end="url(#m3)"/><text class="tc" x="354" y="177">3 admisión</text>
+        <path class="ld" d="M480 225 H351" marker-end="url(#m3)"/><text class="tc" x="360" y="217">4 permitido</text>
+        <path class="ld" d="M345 265 H609" marker-end="url(#m3)"/><text class="tc" x="354" y="257">5 XR aplicado · Crossplane lo observa</text>
+        <path class="l" d="M615 305 H744" marker-end="url(#m3)"/><text class="tc" x="624" y="297">6 crear RDS</text>
+        <path class="ld" d="M750 345 H621" marker-end="url(#m3)"/><text class="tc" x="630" y="337">7 estado</text>
+        <path class="l" d="M615 385 H879" marker-end="url(#m3)"/><text class="tc" x="624" y="377">8 Secret de conexión</text>
+        <path class="ld" d="M615 425 H351" marker-end="url(#m3)"/><text class="tc" x="360" y="417">9 condición Ready → salud</text>
+        <path class="ld" d="M1030 465 H621" marker-end="url(#m3)"/><text class="tc" x="760" y="457">10 plugin Kubernetes lee estado</text>
+        <rect x="682" y="494" width="136" height="26" fill="none" stroke="#F4B740" stroke-dasharray="4 3"/><text class="ta" x="750" y="512" text-anchor="middle">cambio en consola</text>
+        <path class="lad" d="M750 530 H621" marker-end="url(#m3a)"/>        <text class="ta" x="605" y="534" text-anchor="end">11 drift detectado</text>
+        <path class="la" d="M615 565 H744" marker-end="url(#m3a)"/><text class="ta" x="624" y="557">12 revierte</text>
+        <line class="l" x1="20" y1="598" x2="50" y2="598"/><text class="ts" x="56" y="602">llamada síncrona</text>
+        <line class="ld" x1="180" y1="598" x2="210" y2="598"/><text class="ts" x="216" y="602">evento o bucle de reconciliación</text>
+        <line class="la" x1="440" y1="598" x2="470" y2="598"/><text class="ts" x="476" y="602">corrección de drift</text>
+      </svg>
+      <figcaption><b>Figura 5.</b> Las llamadas directas (líneas continuas) son pocas. Lo demás es asíncrono: webhooks, watches del API server y el bucle de reconciliación de Crossplane, que vuelve a comparar con AWS periódicamente. Por eso el drift (11–12) se corrige sin que nadie lo pida.</figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <div class="tabla">
+      <table>
+        <caption>Qué metadatos conectan los planos</caption>
+        <thead><tr><th>Metadato</th><th>Lo escribe</th><th>Lo lee</th><th>Para qué</th></tr></thead>
+        <tbody>
+          <tr><td><code>catalog-info.yaml</code></td><td>Plantilla de Backstage</td><td>Catálogo</td><td>Dueño, sistema y ciclo de vida del componente.</td></tr>
+          <tr><td><code>backstage.io/kubernetes-id</code></td><td>Plantilla (en el XR y el namespace)</td><td>Plugin de Kubernetes</td><td>Mostrar en el portal el estado real de la base de datos.</td></tr>
+          <tr><td><code>plataforma.rdb.io/owner</code>, <code>cost-center</code></td><td>Plantilla</td><td>Kyverno, AWS tags</td><td>Rechazar recursos sin dueño y atribuir costos.</td></tr>
+          <tr><td>Condiciones <code>Synced</code> / <code>Ready</code></td><td>Crossplane</td><td>Argo CD, portal</td><td>Salud del recurso y fin del Golden Path.</td></tr>
+          <tr><td>Eventos de sync</td><td>Argo CD</td><td>Notifications → canal del equipo</td><td>Avisar al desarrollador sin que tenga que mirar el clúster.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bloque" data-parada="II · Ciclo de vida de la plataforma">
+      <h3><span class="req">Vista 4 · Ciclo de vida de la plataforma</span>Cómo se prueba y despliega un cambio en el Control Plane</h3>
+      <p>La plataforma es un producto con su propio repositorio y su propia cadena de promoción. Un error en una Composition no rompe un servicio: rompe todos los que la usan. Por eso nada llega al hub de producción sin haber creado antes una base de datos real en un hub desechable.</p>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 1120 320" role="img" aria-label="Ciclo de vida de cambios del control plane">
+        <defs><marker id="m4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56D6E8"/></marker>
+        <marker id="m4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F4B740"/></marker></defs>
+        <rect width="1120" height="320" fill="#0D2138"/>
+        <rect class="b" x="20" y="40" width="196" height="160"/><text class="ta" x="34" y="64">1</text><text class="t" x="34" y="88">PR al repo plataforma</text><text class="ts" x="34" y="112">composiciones, plantillas,</text><text class="ts" x="34" y="129">políticas y charts</text><text class="ts" x="34" y="146">revisión de dos personas</text>
+        <rect class="b" x="238" y="40" width="196" height="160"/><text class="ta" x="252" y="64">2</text><text class="t" x="252" y="88">CI de plataforma</text><text class="ts" x="252" y="112">yamllint · kubeconform</text><text class="ts" x="252" y="129">kyverno test</text><text class="ts" x="252" y="146">crossplane render</text><text class="ts" x="252" y="163">dry-run de la plantilla</text>
+        <rect class="b" x="456" y="40" width="196" height="160"/><text class="ta" x="470" y="64">3</text><text class="t" x="470" y="88">Hub efímero (kind)</text><text class="ts" x="470" y="112">e2e del Golden Path:</text><text class="ts" x="470" y="129">crea XR y espera Ready</text><text class="ts" x="470" y="146">provoca drift y verifica</text><text class="ts" x="470" y="163">se destruye al terminar</text>
+        <rect class="bd" x="674" y="40" width="196" height="160"/><text class="ta" x="688" y="64">4</text><text class="t" x="688" y="88">Hub de staging</text><text class="ts" x="688" y="112">tag release/*</text><text class="ts" x="688" y="129">compositionRevision nueva</text><text class="ts" x="688" y="146">un equipo canario</text><text class="ts" x="688" y="163">(objetivo, fuera de PoC)</text>
+        <rect class="b" x="892" y="40" width="196" height="160"/><text class="ta" x="906" y="64">5</text><text class="t" x="906" y="88">Hub de producción</text><text class="ts" x="906" y="112">promoción por tag</text><text class="ts" x="906" y="129">sync waves: CRD →</text><text class="ts" x="906" y="146">controladores → XR</text><text class="ts" x="906" y="163">revisión por equipo</text>
+        <path class="l" d="M216 120 H232" marker-end="url(#m4)"/><path class="l" d="M434 120 H450" marker-end="url(#m4)"/><path class="l" d="M652 120 H668" marker-end="url(#m4)"/><path class="l" d="M870 120 H886" marker-end="url(#m4)"/>
+        <path class="lad" d="M990 200 V252 H118 V206" marker-end="url(#m4a)"/>
+        <text class="ta" x="554" y="276" text-anchor="middle">rollback = git revert en el repo de plataforma; Argo CD devuelve el hub al commit anterior</text>
+        <text class="ts" x="554" y="300" text-anchor="middle">los equipos pueden quedarse en una compositionRevision anterior mientras migran</text>
+      </svg>
+      <figcaption><b>Figura 6.</b> En la PoC se implementan las etapas 1, 2, 3 y 5 con un solo hub; staging se diseña pero no se despliega por costo.</figcaption>
+    </figure>
+  </div>
+</section>
+<section class="seccion" id="s3" data-parada="III · APIs y Platform 2.0">
+  <span class="numeral" aria-hidden="true">III</span>
+  <div class="container">
+    <div class="sec-lbl">Sección III</div>
+    <h2>Ecosistema de APIs y evolución hacia Platform 2.0</h2>
+    <p class="entrada">Redeban ya tiene una plataforma de gestión de APIs con más de 300 APIs publicadas. El problema no es el tráfico, que se media bien, sino todo lo que rodea al tráfico: saber qué existe, de quién es y cuánto se usa. Esta sección decide qué se conserva, qué se integra y qué entra de la era 2.0.</p>
+
+    <div class="caja">
+      <span class="lbl">Supuesto declarado</span>
+      <p>El producto de API Management actual se mantiene anonimizado. Lo tratamos como un gestor empresarial con gateway, portal y analítica propios; el diseño no depende de cuál sea, porque se integra por sus especificaciones OpenAPI y su exportación de consumo.</p>
+    </div>
+
+    <div class="bloque" data-parada="III · Auditoría de APIs">
+      <h3><span class="req">Auditoría e integración de APIs</span>Habilitador en el tráfico, cuello de botella en todo lo demás</h3>
+      <div class="tabla">
+        <table>
+          <caption>Diagnóstico de la herramienta actual por capacidad</caption>
+          <thead><tr><th>Capacidad</th><th>Situación actual</th><th>Veredicto</th></tr></thead>
+          <tbody>
+            <tr><td>Enrutamiento y seguridad en tiempo de ejecución</td><td>Autenticación, TLS y límites aplicados en el gateway; opera de forma estable.</td><td><span class="et si">Habilitador</span></td></tr>
+            <tr><td>Descubrimiento</td><td>No hay inventario confiable; se pregunta por chat a quien «sabe».</td><td><span class="et no">Cuello de botella</span></td></tr>
+            <tr><td>Propiedad</td><td>Las APIs no tienen dueño visible; nadie decide qué se depreca.</td><td><span class="et no">Cuello de botella</span></td></tr>
+            <tr><td>Analítica de consumo</td><td>El tablero tarda en cargar y el consumo por API suele obtenerse a mano.</td><td><span class="et no">Cuello de botella</span></td></tr>
+            <tr><td>Versionado</td><td>Conviven versiones sin calendario de retiro conocido.</td><td><span class="et fut">Parcial</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Cómo se integra con la plataforma.</strong> El gateway actual se queda como plano de datos de las 300 APIs: no se migra ni se reemplaza. Backstage se convierte en el catálogo único, que lee las especificaciones OpenAPI desde los repositorios y desde la exportación del gestor, y exige un dueño para registrar cada API. El API Gateway de AWS que ya usamos para el portal expone las APIs nuevas de la plataforma, con planes de uso y cuotas. Es la misma separación que usamos para la infraestructura: el gateway ejecuta y la plataforma declara.</p>
+    </div>
+
+    <div class="bloque" data-parada="III · Servicios de gestión de APIs">
+      <h3><span class="req">Servicios de gestión de APIs</span>Lo que ofrecerá el portal y en qué orden</h3>
+      <div class="tabla">
+        <table>
+          <caption>Servicios del portal de APIs</caption>
+          <thead><tr><th>Servicio</th><th>Qué obtiene el equipo</th><th>Cómo se implementa</th><th>Fase</th></tr></thead>
+          <tbody>
+            <tr><td>Catálogo con dueño</td><td>Buscar una API y saber de quién es, en qué versión va y si sigue activa.</td><td>Entidades <code>API</code> de Backstage alimentadas por OpenAPI; dueño obligatorio.</td><td><span class="et poc">Semilla en PoC</span></td></tr>
+            <tr><td>Documentación viva</td><td>Contrato navegable generado del mismo archivo que implementa el servicio.</td><td>Plugin de documentación OpenAPI de Backstage.</td><td><span class="et dis">v1</span></td></tr>
+            <tr><td>Onboarding de consumidores</td><td>Registrar una aplicación cliente y obtener credenciales sin escribir un correo.</td><td>Plantilla de Backstage que crea el cliente OAuth y la API key.</td><td><span class="et dis">v1.1</span></td></tr>
+            <tr><td>Cuotas y rate limit</td><td>Cada credencial nace con un plan explícito de llamadas por intervalo.</td><td>Usage plans de API Gateway; equivalente en el gestor actual.</td><td><span class="et dis">v1.1</span></td></tr>
+            <tr><td>Métricas de consumo</td><td>Ver el tráfico, la latencia y los errores de su API desde su página del catálogo.</td><td>CloudWatch y exportación del gestor en una tarjeta de Backstage.</td><td><span class="et dis">v1.1</span></td></tr>
+            <tr><td>Versionado y deprecación</td><td>Calendario de retiro visible para los consumidores.</td><td>Ciclo de vida de la entidad en el catálogo.</td><td><span class="et fut">v2</span></td></tr>
+            <tr><td>Monetización</td><td>Cobro por consumo de API.</td><td>No aplica: las APIs internas no se facturan entre equipos.</td><td><span class="et no">Excluido</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="wide">
+    <figure class="fig">
+      <svg class="dg" viewBox="0 0 1120 470" role="img" aria-label="Plano de capacidades con los servicios de gestión de APIs">
+        <rect width="1120" height="470" fill="#0D2138"/>
+        <text class="tl" x="16" y="42">DESARROLLADOR</text><text class="tl" x="234" y="42">INTEGRACIÓN Y ENTREGA</text><text class="tl" x="452" y="42">RECURSOS</text><text class="tl" x="670" y="42">OBSERVABILIDAD</text><text class="tl" x="888" y="42">SEGURIDAD</text>
+        <!-- col 1 -->
+        <rect class="b" x="16" y="60" width="208" height="70"/><text class="t" x="30" y="90">Catálogo de servicios</text><text class="ts" x="30" y="110">dueño y ambiente</text>
+        <rect class="ba" x="16" y="142" width="208" height="70"/><text class="t" x="30" y="172" style="fill:#F4B740">Catálogo de APIs</text><text class="ts" x="30" y="192">+ documentación OpenAPI</text>
+        <rect class="bf" x="16" y="224" width="208" height="70"/><text class="t" x="30" y="254" style="fill:#F4B740">Onboarding</text><text class="ts" x="30" y="274">de consumidores · v1.1</text>
+        <rect class="b" x="16" y="306" width="208" height="70"/><text class="t" x="30" y="336">Software Templates</text><text class="ts" x="30" y="356">Golden Path</text>
+        <!-- col 2 -->
+        <rect class="b" x="234" y="60" width="208" height="70"/><text class="t" x="248" y="90">Argo CD</text><text class="ts" x="248" y="110">reconciliación</text>
+        <rect class="b" x="234" y="142" width="208" height="70"/><text class="t" x="248" y="172">GitHub</text><text class="ts" x="248" y="192">specs OpenAPI versionadas</text>
+        <rect class="ba" x="234" y="224" width="208" height="70"/><text class="t" x="248" y="254" style="fill:#F4B740">API Gateway</text><text class="ts" x="248" y="274">usage plans y cuotas</text>
+        <rect class="bd" x="234" y="306" width="208" height="70"/><text class="t" x="248" y="336">Gestor de APIs actual</text><text class="ts" x="248" y="356">runtime de las 300+</text>
+        <!-- col 3 -->
+        <rect class="b" x="452" y="60" width="208" height="70"/><text class="t" x="466" y="90">Crossplane</text><text class="ts" x="466" y="110">composiciones</text>
+        <rect class="b" x="452" y="142" width="208" height="70"/><text class="t" x="466" y="172">Amazon EKS</text><text class="ts" x="466" y="192">hub y spokes</text>
+        <rect class="b" x="452" y="224" width="208" height="70"/><text class="t" x="466" y="254">RDS PostgreSQL</text><text class="ts" x="466" y="274">por servicio</text>
+        <rect class="bf" x="452" y="306" width="208" height="70"/><text class="t" x="466" y="336" style="fill:#F4B740">Plantilla «API nueva»</text><text class="ts" x="466" y="356">stage + plan · v1.1</text>
+        <!-- col 4 -->
+        <rect class="b" x="670" y="60" width="208" height="70"/><text class="t" x="684" y="90">Notifications</text><text class="ts" x="684" y="110">eventos de sync</text>
+        <rect class="ba" x="670" y="142" width="208" height="70"/><text class="t" x="684" y="172" style="fill:#F4B740">Consumo por API</text><text class="ts" x="684" y="192">tarjeta en el catálogo</text>
+        <rect class="bd" x="670" y="224" width="208" height="70"/><text class="t" x="684" y="254">CloudWatch</text><text class="ts" x="684" y="274">logs y métricas</text>
+        <rect class="bf" x="670" y="306" width="208" height="70"/><text class="t" x="684" y="336" style="fill:#F4B740">OpenCost</text><text class="ts" x="684" y="356">FinOps · fase 2</text>
+        <!-- col 5 -->
+        <rect class="b" x="888" y="60" width="208" height="70"/><text class="t" x="902" y="90">Kyverno</text><text class="ts" x="902" y="110">dueño obligatorio</text>
+        <rect class="ba" x="888" y="142" width="208" height="70"/><text class="t" x="902" y="172" style="fill:#F4B740">Credenciales de API</text><text class="ts" x="902" y="192">API key · OAuth cliente</text>
+        <rect class="b" x="888" y="224" width="208" height="70"/><text class="t" x="902" y="254">External Secrets</text><text class="ts" x="902" y="274">entrega de secretos</text>
+        <rect class="b" x="888" y="306" width="208" height="70"/><text class="t" x="902" y="336">Istio mTLS</text><text class="ts" x="902" y="356">identidad por carga</text>
+        <!-- leyenda -->
+        <rect class="b" x="16" y="414" width="26" height="14"/><text class="ts" x="50" y="426">plataforma base</text>
+        <rect class="ba" x="190" y="414" width="26" height="14"/><text class="ts" x="224" y="426">gestión de APIs · v1</text>
+        <rect class="bf" x="400" y="414" width="26" height="14"/><text class="ts" x="434" y="426">siguiente fase</text>
+        <rect class="bd" x="580" y="414" width="26" height="14"/><text class="ts" x="614" y="426">existente, se integra</text>
+      </svg>
+      <figcaption><b>Figura 7.</b> Plano de capacidades actualizado. Los servicios de gestión de APIs (ámbar) se agregan sin tocar el gateway actual, que sigue siendo el plano de datos de las APIs existentes.</figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <div class="bloque" data-parada="III · Evaluación Platform 2.0">
+      <h3><span class="req">Evaluación Platform 2.0</span>Qué entra de la era 2.0 y qué espera</h3>
+      <p>El criterio es el mismo que usamos para la TVP: una tendencia entra si ataca una fricción del diagnóstico con un costo proporcional. Si no, se excluye con una condición explícita para reabrirla, no con un «después».</p>
+      <div class="tabla">
+        <table>
+          <caption>Decisión por tendencia · costos aproximados de referencia en us-east-1</caption>
+          <thead><tr><th>Tendencia</th><th>Decisión</th><th>Argumento técnico</th><th>Argumento financiero</th><th>Se reabre cuando</th></tr></thead>
+          <tbody>
+            <tr><td>Embedded FinOps</td><td><span class="et si">Incluida mínima</span></td><td>Etiquetas <code>owner</code> y <code>cost-center</code> obligatorias vía Kyverno y tamaños cerrados en la Composition: el guardrail de costo viaja dentro del Golden Path.</td><td>Costo marginal cero (es YAML). Ataca los recursos zombis de F1: todo recurso nace con dueño a quien cobrarle.</td><td>OpenCost y costo estimado en el formulario, al pasar de 20 recursos autoservidos.</td></tr>
+            <tr><td>Green IT</td><td><span class="et fut">Semilla</span></td><td>El tamaño por defecto es el mínimo y cada recurso lleva etiqueta de horario para que la herramienta de apagado actual lo encuentre. Sin tablero.</td><td>Una RDS pequeña apagada fuera de horario ahorra cerca de dos tercios de sus horas; el valor aparece con volumen, no en el piloto.</td><td>Exista la medición de F5 (ambientes con apagado y horas ociosas).</td></tr>
+            <tr><td>AI Gateway</td><td><span class="et no">Excluida</span></td><td>Ningún equipo consume LLMs hoy. Exponerlos en una red de pagos exige filtrar datos de tarjeta antes del modelo (PCI DSS). Dejamos la costura: el mismo API Gateway puede enrutar a Bedrock.</td><td>Se paga por token sin demanda que medir; el esfuerzo de gobierno supera cualquier beneficio en esta fase.</td><td>Un equipo tenga un caso de uso de IA aprobado por seguridad.</td></tr>
+            <tr><td>Soporte para cargas de IA</td><td><span class="et no">Excluida</span></td><td>Nodos GPU y serving de modelos complican un clúster cuyo primer objetivo es entregar una base de datos.</td><td>Un solo nodo GPU de entrada ronda USD 1 por hora, del orden de USD 700 al mes: más de diez veces el presupuesto de la PoC.</td><td>Exista una carga de entrenamiento o inferencia propia con dueño.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="caja acento">
+        <span class="lbl">La postura que defendemos</span>
+        <p>Incluir FinOps y excluir IA no es conservadurismo: es aplicar el diagnóstico. FinOps embebido resuelve una consecuencia de F1 casi gratis; la IA no aparece en ninguna de las cinco fricciones. Diseñar la costura sin construir el componente mantiene la plataforma evolutiva sin inflar la TVP.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="seccion" id="s4" data-parada="IV · Prueba de concepto">
+  <span class="numeral" aria-hidden="true">IV</span>
+  <div class="container">
+    <div class="sec-lbl">Sección IV</div>
+    <h2>Prueba de concepto: el primer Golden Path</h2>
+    <p class="entrada">«Microservicio con base de datos» reemplaza el ticket de 3 a 4 días por un formulario de cuatro campos. Funciona como un menú de combos: el desarrollador pide «combo 2, tamaño mediano» y la cocina, que es el control plane, ya sabe qué preparar. Recibe un servicio completo (repositorio, namespace, base de datos, credenciales y catálogo) ya corriendo y administrado desde Argo CD. No elige subredes, clases de instancia ni cifrado; esas decisiones ya las tomó Redeban.</p>
+
+    <div class="bloque" data-parada="IV · El recorrido">
+      <h3><span class="req">Implementación del primer Golden Path</span>Qué pasa desde el formulario hasta la base de datos</h3>
+      <p>El desarrollador llena en Backstage: nombre del servicio, equipo dueño, tamaño de la base (pequeña o mediana) y descripción. El ambiente no se elige: siempre es desarrollo.</p>
+      <ol class="pasos">
+        <li><div><h4>Se genera el repositorio</h4><p>La plantilla crea el repositorio en GitHub desde un esqueleto de microservicio: código base que lee el Secret de la base, carpeta <code>deploy/</code> con sus manifiestos, <code>catalog-info.yaml</code> con el dueño y el pipeline de la aplicación.</p><span class="herr">Backstage Software Template</span></div></li>
+        <li><div><h4>Se declara la infraestructura y el registro del servicio</h4><p>La misma plantilla abre un PR en el repositorio GitOps con el namespace, un <code>PostgreSQLInstance</code> que solo dice «tamaño: pequeña» y un pequeño <code>servicio.json</code> que apunta al repositorio del servicio. El PR se fusiona solo cuando pasan los checks de política; el contrato estándar no requiere revisión humana.</p><span class="herr">GitHub · publish:github:pull-request</span></div></li>
+        <li><div><h4>La política valida antes de crear</h4><p>El recurso sin dueño, sin centro de costo o con un tamaño no permitido se rechaza en la admisión, antes de tocar AWS.</p><span class="herr">Kyverno · esquema de la XRD</span></div></li>
+        <li><div><h4>Argo CD crea las dos Applications</h4><p>Un ApplicationSet sincroniza la infraestructura desde el repositorio GitOps y otro crea la Application del servicio leyendo <code>servicio.json</code>. Ambas nacen con <code>selfHeal</code> activado.</p><span class="herr">Argo CD · dos ApplicationSets</span></div></li>
+        <li><div><h4>Crossplane materializa la RDS</h4><p>La Composition traduce «pequeña» a la instancia real con los valores de Redeban: motor, cifrado, respaldos, subred privada y etiquetas. Deja la cadena de conexión como Secret en el namespace del equipo.</p><span class="herr">Crossplane v2 · provider AWS</span></div></li>
+        <li><div><h4>El servicio v0 arranca y conecta</h4><p>Cuando el Secret existe, Argo CD despliega el <code>deploy/</code> del repositorio con la imagen genérica de la plataforma, que se conecta a la base y responde «conectado». El servicio ya corre y ya está administrado.</p><span class="herr">Argo CD · Application del servicio</span></div></li>
+        <li><div><h4>El servicio aparece en el catálogo</h4><p>Sin paso adicional: nace con dueño, enlace a su repositorio y el estado real de su base de datos visible en el portal.</p><span class="herr">Catálogo · plugin Kubernetes</span></div></li>
+        <li><div><h4>El desarrollador toma el control</h4><p>Cambia la imagen en <code>deploy/</code> con un commit y Argo CD sincroniza, sin pedir nada. Construir la imagen sigue siendo del pipeline del equipo.</p><span class="herr">Fin del Golden Path</span></div></li>
+      </ol>
+    </div>
+
+    <div class="bloque" data-parada="IV · Manifiestos">
+      <h3><span class="req">Construcción funcional</span>Las piezas, en código</h3>
+      <p>Extractos de lo que vive en los repositorios de la plataforma. Los nombres de organización y dominios están anonimizados.</p>
+
+      <details class="codigo" open>
+        <summary><span>template.yaml <span class="ds">· plantilla de Backstage</span></span></summary>
+<pre><span class="k">apiVersion:</span> scaffolder.backstage.io/v1beta3
+<span class="k">kind:</span> Template
+<span class="k">metadata:</span>
+  <span class="k">name:</span> microservicio-con-bd
+  <span class="k">title:</span> <span class="s">Microservicio con base de datos</span>
+<span class="k">spec:</span>
+  <span class="k">owner:</span> equipo-plataforma
+  <span class="k">type:</span> service
+  <span class="k">parameters:</span>
+    - <span class="k">title:</span> <span class="s">Tu servicio</span>
+      <span class="k">required:</span> [nombre, equipo, tamano]
+      <span class="k">properties:</span>
+        <span class="k">nombre:</span> { type: string, pattern: <span class="s">'^[a-z][a-z0-9-]{2,30}$'</span> }
+        <span class="k">equipo:</span> { type: string, <span class="s">'ui:field'</span>: OwnerPicker }
+        <span class="k">tamano:</span> { type: string, enum: [pequena, mediana], default: pequena }
+        <span class="k">descripcion:</span> { type: string }
+  <span class="k">steps:</span>
+    - <span class="k">id:</span> codigo
+      <span class="k">action:</span> fetch:template
+      <span class="k">input:</span> { url: ./esqueleto, values: { nombre: <span class="s">${{ parameters.nombre }}</span>, equipo: <span class="s">${{ parameters.equipo }}</span> } }
+    - <span class="k">id:</span> repo
+      <span class="k">action:</span> publish:github
+      <span class="k">input:</span> { repoUrl: <span class="s">github.com?owner=rdb-org&amp;repo=${{ parameters.nombre }}</span> }
+    - <span class="k">id:</span> infra
+      <span class="k">action:</span> fetch:template
+      <span class="k">input:</span> { url: ./infra, targetPath: ./gitops }   <span class="c"># namespace + PostgreSQLInstance + servicio.json</span>
+    - <span class="k">id:</span> pr-gitops
+      <span class="k">action:</span> publish:github:pull-request
+      <span class="k">input:</span>
+        <span class="k">repoUrl:</span> <span class="s">github.com?owner=rdb-org&amp;repo=plataforma-gitops</span>
+        <span class="k">branchName:</span> <span class="s">alta-${{ parameters.nombre }}</span>
+        <span class="k">sourcePath:</span> ./gitops
+        <span class="k">targetPath:</span> <span class="s">equipos/${{ parameters.equipo }}/${{ parameters.nombre }}</span>
+        <span class="k">title:</span> <span class="s">'Alta de ${{ parameters.nombre }} en desarrollo'</span>
+    - <span class="k">id:</span> catalogo
+      <span class="k">action:</span> catalog:register
+      <span class="k">input:</span> { repoContentsUrl: <span class="s">${{ steps.repo.output.repoContentsUrl }}</span>, catalogInfoPath: /catalog-info.yaml }</pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>xrd.yaml <span class="ds">· la API interna que ven los equipos</span></span></summary>
+<pre><span class="k">apiVersion:</span> apiextensions.crossplane.io/v2
+<span class="k">kind:</span> CompositeResourceDefinition
+<span class="k">metadata:</span>
+  <span class="k">name:</span> postgresqlinstances.plataforma.rdb.io
+<span class="k">spec:</span>
+  <span class="k">group:</span> plataforma.rdb.io
+  <span class="k">names:</span> { kind: PostgreSQLInstance, plural: postgresqlinstances }
+  <span class="k">scope:</span> Namespaced            <span class="c"># Crossplane v2: el recurso vive en el namespace del equipo</span>
+  <span class="k">versions:</span>
+    - <span class="k">name:</span> v1alpha1
+      <span class="k">served:</span> true
+      <span class="k">referenceable:</span> true
+      <span class="k">schema:</span>
+        <span class="k">openAPIV3Schema:</span>
+          <span class="k">type:</span> object
+          <span class="k">properties:</span>
+            <span class="k">spec:</span>
+              <span class="k">type:</span> object
+              <span class="k">required:</span> [tamano]
+              <span class="k">properties:</span>
+                <span class="k">tamano:</span> { type: string, enum: [pequena, mediana] }   <span class="c"># «grande» se rechaza aquí</span></pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>composition.yaml <span class="ds">· lo que Redeban ya decidió</span></span></summary>
+<pre><span class="k">apiVersion:</span> apiextensions.crossplane.io/v1
+<span class="k">kind:</span> Composition
+<span class="k">metadata:</span>
+  <span class="k">name:</span> postgresql-aws-dev
+<span class="k">spec:</span>
+  <span class="k">compositeTypeRef:</span> { apiVersion: plataforma.rdb.io/v1alpha1, kind: PostgreSQLInstance }
+  <span class="k">mode:</span> Pipeline
+  <span class="k">pipeline:</span>
+    - <span class="k">step:</span> recursos
+      <span class="k">functionRef:</span> { name: function-patch-and-transform }
+      <span class="k">input:</span>
+        <span class="k">apiVersion:</span> pt.fn.crossplane.io/v1beta1
+        <span class="k">kind:</span> Resources
+        <span class="k">resources:</span>
+          - <span class="k">name:</span> rds
+            <span class="k">base:</span>
+              <span class="k">apiVersion:</span> rds.aws.m.upbound.io/v1beta1
+              <span class="k">kind:</span> Instance
+              <span class="k">spec:</span>
+                <span class="k">forProvider:</span>
+                  <span class="k">region:</span> us-east-1
+                  <span class="k">engine:</span> postgres
+                  <span class="k">engineVersion:</span> <span class="s">"16"</span>
+                  <span class="k">instanceClass:</span> db.t4g.micro
+                  <span class="k">allocatedStorage:</span> 20
+                  <span class="k">storageEncrypted:</span> true
+                  <span class="k">publiclyAccessible:</span> false
+                  <span class="k">backupRetentionPeriod:</span> 7
+                  <span class="k">dbSubnetGroupName:</span> datos-dev
+                  <span class="k">username:</span> app
+                  <span class="k">autoGeneratePassword:</span> true
+                  <span class="k">passwordSecretRef:</span> { name: rds-pass, key: password }
+                  <span class="c"># + security group del namespace y etiquetas (omitidos)</span>
+                <span class="k">writeConnectionSecretToRef:</span> { name: bd-conexion }
+            <span class="k">patches:</span>
+              - <span class="k">type:</span> FromCompositeFieldPath
+                <span class="k">fromFieldPath:</span> spec.tamano
+                <span class="k">toFieldPath:</span> spec.forProvider.instanceClass
+                <span class="k">transforms:</span>
+                  - { type: map, map: { pequena: db.t4g.micro, mediana: db.t4g.small } }</pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>bd.yaml <span class="ds">· lo único que escribe la plantilla</span></span></summary>
+<pre><span class="k">apiVersion:</span> plataforma.rdb.io/v1alpha1
+<span class="k">kind:</span> PostgreSQLInstance
+<span class="k">metadata:</span>
+  <span class="k">name:</span> conciliacion-bd
+  <span class="k">namespace:</span> conciliacion
+  <span class="k">labels:</span>
+    <span class="k">plataforma.rdb.io/owner:</span> equipo-conciliacion
+    <span class="k">plataforma.rdb.io/cost-center:</span> cc-0000
+    <span class="k">backstage.io/kubernetes-id:</span> conciliacion
+<span class="k">spec:</span>
+  <span class="k">tamano:</span> pequena</pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>deploy/deployment.yaml <span class="ds">· servicio v0 en el repo del equipo</span></span></summary>
+<pre><span class="k">apiVersion:</span> apps/v1
+<span class="k">kind:</span> Deployment
+<span class="k">metadata:</span> { name: conciliacion }
+<span class="k">spec:</span>
+  <span class="k">replicas:</span> 1
+  <span class="k">selector:</span> { matchLabels: { app: conciliacion } }
+  <span class="k">template:</span>
+    <span class="k">metadata:</span> { labels: { app: conciliacion } }
+    <span class="k">spec:</span>
+      <span class="k">containers:</span>
+        - <span class="k">name:</span> conciliacion
+          <span class="k">image:</span> <span class="s">registro.rdb.io/plataforma/verificador-bd:1</span>   <span class="c"># v0: imagen genérica; el primer commit del equipo la cambia</span>
+          <span class="k">envFrom:</span> [ { secretRef: { name: bd-conexion } } ]     <span class="c"># el Secret que dejó Crossplane</span>
+          <span class="k">readinessProbe:</span> { httpGet: { path: /ok, port: 8080 } }  <span class="c"># hace SELECT 1 contra la base</span></pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>servicio.json <span class="ds">· lo que enlaza el servicio con Argo CD</span></span></summary>
+<pre>{
+  <span class="k">"servicio"</span>: <span class="s">"conciliacion"</span>,
+  <span class="k">"repoURL"</span>: <span class="s">"https://github.com/rdb-org/conciliacion"</span>
+}   <span class="c"># vive en plataforma-gitops/equipos/equipo-conciliacion/conciliacion/</span></pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>politica-bd.yaml <span class="ds">· Kyverno</span></span></summary>
+<pre><span class="k">apiVersion:</span> kyverno.io/v1
+<span class="k">kind:</span> ClusterPolicy
+<span class="k">metadata:</span> { name: bd-requiere-dueno-y-costo }
+<span class="k">spec:</span>
+  <span class="k">rules:</span>
+    - <span class="k">name:</span> etiquetas-obligatorias
+      <span class="k">match:</span>
+        <span class="k">any:</span>
+          - <span class="k">resources:</span> { kinds: [plataforma.rdb.io/v1alpha1/PostgreSQLInstance] }
+      <span class="k">validate:</span>
+        <span class="k">failureAction:</span> Enforce
+        <span class="k">message:</span> <span class="s">"Toda base de datos necesita dueño y centro de costo."</span>
+        <span class="k">pattern:</span>
+          <span class="k">metadata:</span>
+            <span class="k">labels:</span>
+              <span class="k">plataforma.rdb.io/owner:</span> <span class="s">"?*"</span>
+              <span class="k">plataforma.rdb.io/cost-center:</span> <span class="s">"?*"</span></pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>applicationsets.yaml <span class="ds">· Argo CD administra infraestructura y servicio</span></span></summary>
+<pre><span class="c"># 1) Infraestructura: la edita solo la plantilla</span>
+<span class="k">apiVersion:</span> argoproj.io/v1alpha1
+<span class="k">kind:</span> ApplicationSet
+<span class="k">metadata:</span> { name: equipos-infra, namespace: argocd }
+<span class="k">spec:</span>
+  <span class="k">generators:</span>
+    - <span class="k">git:</span>
+        <span class="k">repoURL:</span> https://github.com/rdb-org/plataforma-gitops
+        <span class="k">revision:</span> main
+        <span class="k">directories:</span> [ { path: <span class="s">"equipos/*/*"</span> } ]
+  <span class="k">template:</span>
+    <span class="k">metadata:</span> { name: <span class="s">'{{path.basename}}-infra'</span> }
+    <span class="k">spec:</span>
+      <span class="k">project:</span> equipos
+      <span class="k">source:</span>
+        <span class="k">repoURL:</span> https://github.com/rdb-org/plataforma-gitops
+        <span class="k">targetRevision:</span> main
+        <span class="k">path:</span> <span class="s">'{{path}}'</span>
+        <span class="k">directory:</span> { exclude: <span class="s">'servicio.json'</span> }
+      <span class="k">destination:</span> { server: https://kubernetes.default.svc, namespace: <span class="s">'{{path.basename}}'</span> }
+      <span class="k">syncPolicy:</span>
+        <span class="k">automated:</span> { prune: true, selfHeal: true }   <span class="c"># selfHeal es la mitad de F3</span>
+---
+<span class="c"># 2) Servicio: lee el deploy/ del repositorio del propio equipo</span>
+<span class="k">apiVersion:</span> argoproj.io/v1alpha1
+<span class="k">kind:</span> ApplicationSet
+<span class="k">metadata:</span> { name: equipos-servicios, namespace: argocd }
+<span class="k">spec:</span>
+  <span class="k">generators:</span>
+    - <span class="k">git:</span>
+        <span class="k">repoURL:</span> https://github.com/rdb-org/plataforma-gitops
+        <span class="k">revision:</span> main
+        <span class="k">files:</span> [ { path: <span class="s">"equipos/*/*/servicio.json"</span> } ]
+  <span class="k">template:</span>
+    <span class="k">metadata:</span> { name: <span class="s">'{{servicio}}'</span> }
+    <span class="k">spec:</span>
+      <span class="k">project:</span> equipos
+      <span class="k">source:</span> { repoURL: <span class="s">'{{repoURL}}'</span>, targetRevision: main, path: deploy }
+      <span class="k">destination:</span> { server: https://kubernetes.default.svc, namespace: <span class="s">'{{servicio}}'</span> }
+      <span class="k">syncPolicy:</span>
+        <span class="k">automated:</span> { prune: true, selfHeal: true }</pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>appproject-equipos.yaml <span class="ds">· qué puede y qué no puede tocar un equipo</span></span></summary>
+<pre><span class="k">apiVersion:</span> argoproj.io/v1alpha1
+<span class="k">kind:</span> AppProject
+<span class="k">metadata:</span> { name: equipos, namespace: argocd }
+<span class="k">spec:</span>
+  <span class="k">sourceRepos:</span>
+    - https://github.com/rdb-org/plataforma-gitops   <span class="c"># infraestructura</span>
+    - https://github.com/rdb-org/*                    <span class="c"># repositorios de servicios</span>
+  <span class="k">destinations:</span>
+    - { server: https://kubernetes.default.svc, namespace: <span class="s">'*'</span> }   <span class="c"># acotado por el ApplicationSet a un namespace por equipo</span>
+  <span class="k">namespaceResourceWhitelist:</span>
+    - { group: apps, kind: Deployment }
+    - { group: <span class="s">""</span>, kind: Service }
+    - { group: plataforma.rdb.io, kind: PostgreSQLInstance }
+  <span class="k">clusterResourceWhitelist:</span>
+    - { group: <span class="s">""</span>, kind: Namespace }</pre>
+      </details>
+
+      <details class="codigo">
+        <summary><span>Estructura de repositorios</span></summary>
+<pre>infra-terraform/          <span class="c"># cimientos: vpc, eks, iam, rds-backstage, api-gateway</span>
+plataforma-gitops/
+├── bootstrap/            <span class="c"># app of apps: la raíz que Argo CD sincroniza primero</span>
+├── plataforma/
+│   ├── backstage/        <span class="c"># chart + templates/microservicio-con-bd</span>
+│   ├── crossplane/       <span class="c"># providers, functions, xrd.yaml, composition.yaml</span>
+│   ├── kyverno/          <span class="c"># politica-bd.yaml y pruebas</span>
+│   ├── istio/            <span class="c"># ambient, ingress, AuthorizationPolicy</span>
+│   └── external-secrets/
+└── equipos/              <span class="c"># aquí escribe solo la plantilla</span>
+    └── equipo-conciliacion/
+        └── conciliacion/
+            ├── namespace.yaml
+            ├── bd.yaml
+            └── servicio.json    <span class="c"># enlaza con el repo del servicio</span>
+
+conciliacion/             <span class="c"># repo del equipo: lo edita el equipo</span>
+├── src/
+├── deploy/               <span class="c"># Argo CD lo sincroniza</span>
+│   └── deployment.yaml   <span class="c"># v0: imagen genérica que conecta a la BD</span>
+└── catalog-info.yaml
+</pre>
+      </details>
+    </div>
+
+    <div class="bloque" data-parada="IV · Evidencia de autoservicio">
+      <h3><span class="req">Evidencia de autoservicio</span>Cómo demostramos que el ticket desaparece</h3>
+      <div class="tabla">
+        <table>
+          <caption>Pruebas de aceptación de la PoC</caption>
+          <thead><tr><th>Prueba</th><th>Qué se hace</th><th>Criterio</th><th>Evidencia</th></tr></thead>
+          <tbody>
+            <tr><td>Tiempo</td><td>Llenar el formulario con cronómetro visible.</td><td>Servicio respondiendo en menos de 15 minutos.</td><td>Video</td></tr>
+            <tr><td>Servicio</td><td>Abrir la URL interna del servicio v0.</td><td>Responde «conectado a la base de datos» sin credenciales manuales.</td><td>Captura</td></tr>
+            <tr><td>Autonomía</td><td>Cambiar la imagen en <code>deploy/</code> con un commit.</td><td>Argo CD sincroniza y el servicio se actualiza sin pedir nada.</td><td>Video</td></tr>
+            <tr><td>Cero tickets</td><td>Recorrer el flujo sin intervención del proveedor.</td><td>Ninguna acción manual fuera del formulario.</td><td>Video</td></tr>
+            <tr><td>Drift</td><td>Cambiar en la consola de AWS la retención de respaldos.</td><td>Revertido sin operador en el siguiente ciclo.</td><td>Captura antes y después</td></tr>
+            <tr><td>Catálogo</td><td>Buscar el servicio recién creado en Backstage.</td><td>Aparece con dueño, repo y estado de la BD.</td><td>Captura</td></tr>
+            <tr><td>Política</td><td>Enviar una base sin centro de costo y otra «grande».</td><td>Ambas rechazadas con mensaje claro.</td><td>Captura del rechazo</td></tr>
+            <tr><td>Reproducible</td><td>Destruir y recrear todo desde los repositorios.</td><td>El entorno vuelve igual sin pasos manuales.</td><td>Repositorio</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dos">
+        <div class="fuera">
+          <h4>Antes · flujo por ticket</h4>
+          <ul>
+            <li>Redactar solicitud al proveedor y esperar la cola.</li>
+            <li>Aprobaciones en serie y ajustes por correo.</li>
+            <li>Credenciales entregadas a mano.</li>
+            <li>Cambios posteriores por consola, sin traza en Git.</li>
+            <li>3 a 4 días hábiles por recurso.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Después · Golden Path</h4>
+          <ul>
+            <li>Cuatro campos en Backstage y un servicio que responde.</li>
+            <li>Política aplicada en la admisión, no en una reunión.</li>
+            <li>Credenciales como Secret en el namespace.</li>
+            <li>Todo cambio pasa por Git; el drift se revierte solo.</li>
+            <li>Alrededor de 10 minutos.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bloque" data-parada="IV · Costo de la PoC">
+      <h3><span class="req">Viabilidad del entorno</span>Cuánto cuesta la PoC en AWS</h3>
+      <div class="tabla">
+        <table>
+          <caption>Costo aproximado por hora · us-east-1 · validar con la calculadora de AWS</caption>
+          <thead><tr><th>Componente</th><th>Configuración</th><th>USD / hora</th></tr></thead>
+          <tbody>
+            <tr><td>EKS control plane</td><td>Un clúster</td><td class="num">0,100</td></tr>
+            <tr><td>Nodos</td><td>2 × t3.medium</td><td class="num">0,083</td></tr>
+            <tr><td>NAT Gateway</td><td>Uno, sin contar tráfico</td><td class="num">0,045</td></tr>
+            <tr><td>NLB interno</td><td>Uno</td><td class="num">0,023</td></tr>
+            <tr><td>RDS</td><td>2 × db.t4g.micro (Backstage y piloto)</td><td class="num">0,032</td></tr>
+            <tr class="destacada"><td>Total</td><td>Sin almacenamiento ni transferencia</td><td class="num"><b>≈ 0,28</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Encendida todo el mes, la PoC cuesta alrededor de USD 200. Encendida solo para trabajar (unas 160 horas en total) y destruida con <code>terraform destroy</code> entre sesiones, queda cerca de USD 45, dentro del presupuesto estimado de USD 50. La cuenta usa alertas de AWS Budgets y accesos individuales por IAM Identity Center, nunca credenciales compartidas.</p>
+    </div>
+
+    <div class="bloque" data-parada="IV · Pendientes">
+      <h3><span class="req">Antes de la sustentación</span>Decisiones que el equipo debe cerrar</h3>
+      <ul class="lista-l">
+        <li><b>Techo de la delegación de permisos.</b>Hasta dónde cede el proveedor el rol que usa Crossplane. Es la única respuesta que puede obligar a rediseñar la TVP.</li>
+        <li><b>Imagen genérica.</b>Alguien debe construir y publicar en el registro la imagen que usa el servicio v0, y definir cómo se versiona.</li>
+        <li><b>Equipo piloto.</b>Elegir un equipo que ya sufra la espera y tenga un servicio real por arrancar dentro de la ventana del proyecto.</li>
+        <li><b>Contrato de la base de datos.</b>Versión del motor, tamaños, política de respaldo y quién asume el costo del recurso autoservido.</li>
+        <li><b>Rúbrica.</b>Contrastar cada sección con la rúbrica publicada en Bloque Neón.</li>
+      </ul>
+    </div>
+
+    <p class="cita">La plataforma no le quita trabajo al proveedor: le quita la espera al desarrollador.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container"><span>ARTI-4219 Arquitectura de Plataformas · Maestría en Arquitecturas de TI · Universidad de los Andes</span><span>2026-20 · Grupo 2 · Proyecto Integrador #1</span></div>
+</footer>
+
+<div class="control" aria-label="Controles de presentación">
+  <span class="pos" id="pos" aria-live="polite"></span>
+  <button type="button" id="ant" hidden aria-label="Parada anterior">Anterior</button>
+  <button type="button" id="sig" hidden aria-label="Parada siguiente">Siguiente</button>
+  <button type="button" id="modo" aria-pressed="false">Presentar</button>
+</div>
+<div class="ayuda">← → para avanzar · P reproduce la animación · Esc para salir</div>
+
+<script>
+(function(){
+  var paradas=[].slice.call(document.querySelectorAll('[data-parada]'));
+  var body=document.body, pos=document.getElementById('pos');
+  var btn=document.getElementById('modo'), ant=document.getElementById('ant'), sig=document.getElementById('sig');
+  function actual(){
+    var y=window.scrollY+window.innerHeight*0.3, i=0;
+    paradas.forEach(function(p,k){ if(p.getBoundingClientRect().top+window.scrollY<=y) i=k; });
+    return i;
+  }
+  function pintar(){ var i=actual(); pos.textContent=(i+1)+'/'+paradas.length+' · '+paradas[i].getAttribute('data-parada'); }
+  function ir(d){ var i=Math.max(0,Math.min(paradas.length-1,actual()+d)); paradas[i].scrollIntoView({block:'start'}); }
+  function alternar(on){
+    body.classList.toggle('presentando',on);
+    btn.textContent=on?'Salir':'Presentar'; btn.setAttribute('aria-pressed',on);
+    ant.hidden=sig.hidden=!on;
+    if(on){ pintar(); if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function(){}); }
+    else if(document.fullscreenElement){ document.exitFullscreen().catch(function(){}); }
+  }
+  btn.addEventListener('click',function(){ alternar(!body.classList.contains('presentando')); });
+  ant.addEventListener('click',function(){ ir(-1); });
+  sig.addEventListener('click',function(){ ir(1); });
+  document.addEventListener('keydown',function(e){
+    if(!body.classList.contains('presentando')) return;
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>-1){ e.preventDefault(); ir(1); }
+    else if(['ArrowLeft','PageUp'].indexOf(e.key)>-1){ e.preventDefault(); ir(-1); }
+    else if(e.key==='Escape'){ alternar(false); }
+  });
+  window.addEventListener('scroll',function(){ if(body.classList.contains('presentando')) pintar(); },{passive:true});
+})();
+</script>
+
+<script>
+(function(){
+  var TG=10/480, T5=3.5, DUR=20.5, LENTO=7, FINAL=18.6;
+  var svg=document.getElementById('c-svg'), car=document.getElementById('carrera');
+  var btn=document.getElementById('c-btn'), rango=document.getElementById('c-rango');
+  var hora=document.getElementById('c-hora'), vel=document.getElementById('c-vel');
+  var pT=document.getElementById('p-t'), pT2=document.getElementById('p-t2'), pG=document.getElementById('p-g'), pG2=document.getElementById('p-g2');
+  var tk=document.getElementById('tk'), gk=document.getElementById('gk'), gkg=document.getElementById('gk-glow');
+  var LT=pT.getTotalLength(), LG=pG.getTotalLength();
+  [[pT2,LT],[pG2,LG]].forEach(function(a){a[0].style.strokeDasharray=a[1];a[0].style.strokeDashoffset=a[1];});
+  function largoEn(path,L,x,y){var best=0,bd=1e9;for(var l=0;l<=L;l+=2){var q=path.getPointAtLength(l),d=(q.x-x)*(q.x-x)+(q.y-y)*(q.y-y);if(d<bd){bd=d;best=l;}}return best;}
+  function st(id,path,L){var g=document.getElementById(id);return {g:g,dw:g.querySelector('.c-dw'),l:largoEn(path,L,+g.dataset.x,+g.dataset.y)};}
+  /* ruta ticket: [llega, sale] en días hábiles */
+  var ST=[st('s1',pT,LT),st('s2',pT,LT),st('s3',pT,LT),st('s4',pT,LT),st('s5',pT,LT)];
+  var tramT=[[0.02,0.4],[0.45,1.6],[1.66,2.6],[2.66,3.44],[3.5,99]];
+  var SG=[st('g1',pG,LG),st('g2',pG,LG),st('g3',pG,LG),st('g4',pG,LG),st('g5',pG,LG),st('g6',pG,LG)];
+  var m=1/480; /* un minuto hábil */
+  var tramG=[[0.3*m,0.6*m],[0.9*m,2.6*m],[3.0*m,3.6*m],[4.0*m,4.7*m],[5.1*m,9.5*m],[TG,99]];
+  var narr=document.getElementById('g-narr');
+  var NARR=['Entra por API Gateway, la única puerta pública','Backstage: nombre, equipo, tamaño y descripción','La plantilla crea el repo del microservicio y abre el PR en GitOps','Argo CD sincroniza infraestructura y servicio; Kyverno valida','Crossplane crea la RDS y el servicio v0 arranca y conecta'];
+  var cola=[].slice.call(document.querySelectorAll('#cola rect')), apr=[].slice.call(document.querySelectorAll('#aprob circle'));
+  var correos=document.getElementById('correos');
+  var boom=document.getElementById('boom'), boomTxt=document.getElementById('boom-txt'), velo=document.getElementById('velo');
+  var cnum=document.getElementById('c-cnum'), fcom=document.getElementById('f-commits');
+
+  /* chispas */
+  var ch=document.getElementById('chispas');
+  for(var k=0;k<14;k++){var a=k/14*Math.PI*2, r=60+(k%3)*28, c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r',k%2?3:4.5);c.setAttribute('class','chispa');c.style.setProperty('--dx',(Math.cos(a)*r).toFixed(1)+'px');c.style.setProperty('--dy',(Math.sin(a)*r).toFixed(1)+'px');ch.appendChild(c);}
+
+  /* grafo de commits */
+  var G=document.getElementById('git'), base=document.getElementById('git-base');
+  var X0=615, X1=1150, Y0=390, Y1=440, PASO=0.1, nodos=[], lazos=[];
+  function xDe(t){return X0+(t-TG)/(T5-TG)*(X1-X0);}
+  var i=0, ultMain=null, ultRama=null;
+  for(var t=TG+0.06;t<=T5;t+=PASO,i++){
+    var fase=i%8, rama=(fase>=3&&fase<=5), n={t:t,x:xDe(t),y:rama?Y1:Y0};
+    n.el=document.createElementNS('http://www.w3.org/2000/svg','circle');n.el.setAttribute('cx',n.x.toFixed(1));n.el.setAttribute('cy',n.y);n.el.setAttribute('r',rama?3.8:4.6);n.el.setAttribute('class','git-n');n.el.style.display='none';
+    var desde=rama?(fase===3?ultMain:ultRama):(fase===6?ultRama:ultMain);
+    if(desde){var pth=document.createElementNS('http://www.w3.org/2000/svg','path'),mx=(desde.x+n.x)/2;
+      pth.setAttribute('d','M'+desde.x.toFixed(1)+' '+desde.y+' C'+mx.toFixed(1)+' '+desde.y+' '+mx.toFixed(1)+' '+n.y+' '+n.x.toFixed(1)+' '+n.y);
+      pth.setAttribute('class','git-l');pth.style.display='none';G.appendChild(pth);lazos.push({t:t,el:pth});}
+    nodos.push(n); if(rama) ultRama=n; else ultMain=n;
+  }
+  nodos.forEach(function(n){G.appendChild(n.el);});
+
+  function tiempo(s){ if(s<=LENTO) return TG*(s/LENTO); if(s>=FINAL) return T5+0.02; return TG+(T5+0.02-TG)*Math.pow((s-LENTO)/(FINAL-LENTO),1.15); }
+  function reloj(d){var min=Math.round(d*480),dia=Math.floor(min/480),r=min%480,h=8+Math.floor(r/60),mm=r%60;
+    return ['Lun','Mar','Mié','Jue','Vie'][Math.min(dia,4)]+' '+(h<10?'0':'')+h+':'+(mm<10?'0':'')+mm;}
+  function dur(d){var min=Math.round(d*480);if(min<60)return min+' min';var h=Math.floor(min/60),dd=Math.floor(h/8),hh=h%8;return (dd?dd+' d ':'')+hh+' h';}
+  function mover(t,paradas,tramos,path,L,ficha,glow,conDw){
+    var pos=0, prev=0, prevSal=0;
+    for(var k=0;k<paradas.length;k++){
+      var lle=tramos[k][0], sal=tramos[k][1], s=paradas[k];
+      if(t<prevSal){ break; }
+      if(t<lle){ var f=(t-prevSal)/(lle-prevSal); f=f<0?0:f; f=f*f*(3-2*f); pos=prev+(s.l-prev)*f; break; }
+      pos=s.l; prev=s.l; prevSal=sal;
+    }
+    paradas.forEach(function(s,k){
+      var lle=tramos[k][0], sal=tramos[k][1], dentro=t>=lle&&t<sal&&k<paradas.length-1;
+      s.g.classList.toggle('espera',dentro); s.g.classList.toggle('hecha',t>=lle);
+      if(conDw&&s.dw){ s.dw.textContent = t<lle?'':(k===paradas.length-1?'':(dentro?'esperando '+dur(t-lle):dur(sal-lle))); }
+    });
+    var q=path.getPointAtLength(pos); ficha.setAttribute('transform','translate('+q.x.toFixed(1)+' '+q.y.toFixed(1)+')');
+    if(glow){glow.setAttribute('cx',q.x);glow.setAttribute('cy',q.y);ficha.removeAttribute('transform');ficha.setAttribute('cx',q.x);ficha.setAttribute('cy',q.y);}
+    return pos;
+  }
+  var p=0, corre=false, ult=0, raf=0, boomHecho=false, visibles=0;
+  function pintar(nuevo){
+    var t=tiempo(p);
+    hora.textContent=reloj(Math.min(t,T5));
+    var lento=p<LENTO; vel.classList.toggle('lento',lento); vel.textContent=lento?'tiempo real':(p>=FINAL?'fin':'acelerado');
+    var posT=mover(t,ST,tramT,pT,LT,tk,null,true); pT2.style.strokeDashoffset=LT-posT;
+    var posG=mover(t,SG,tramG,pG,LG,gk,gkg,false); pG2.style.strokeDashoffset=LG-posG;
+    /* detalles */
+    var f2=Math.max(0,Math.min(1,(t-tramT[1][0])/(tramT[1][1]-tramT[1][0])));
+    cola.forEach(function(r,k){r.classList.toggle('ido',k<Math.floor(f2*5.2));});
+    var f3=Math.max(0,Math.min(1,(t-tramT[2][0])/(tramT[2][1]-tramT[2][0])));
+    apr.forEach(function(c,k){c.classList.toggle('ok',f3>(k+1)/3.4);});
+    var f4=(t-tramT[3][0])/(tramT[3][1]-tramT[3][0]);
+    correos.textContent=f4<=0?'':'correos ida y vuelta: '+Math.min(6,Math.ceil(f4*6));
+    /* boom */
+    var llego=t>=TG;
+    if(llego&&!boomHecho&&nuevo){boom.classList.remove('on');void boom.getBoundingClientRect();boom.classList.add('on');}
+    boomHecho=llego; boomTxt.classList.toggle('on',llego&&p<LENTO+3.5);
+    svg.classList.toggle('con-git',llego);
+    var etapa=0; for(var e=0;e<5;e++){ if(t>=tramG[e][0]-0.35*m) etapa=e; }
+    narr.textContent=(p>0&&!llego)?NARR[etapa]:'';
+    /* commits */
+    var tc=Math.min(t,T5), n=0;
+    base.setAttribute('x2',llego?Math.max(X0,xDe(tc)).toFixed(1):X0);
+    nodos.forEach(function(nd){var v=nd.t<=tc;if(v){n++;if(nd.el.style.display==='none'){nd.el.style.display='';if(nuevo){nd.el.classList.remove('nuevo');void nd.el.getBoundingClientRect();nd.el.classList.add('nuevo');}}}else nd.el.style.display='none';});
+    lazos.forEach(function(l){l.el.style.display=l.t<=tc?'':'none';});
+    cnum.textContent=n; fcom.textContent=nodos.length+' commits';
+    velo.classList.toggle('ido',p>0);
+    rango.value=Math.round(p/DUR*1000);
+    car.classList.toggle('fin',p>=FINAL);
+    if(p>=DUR&&!espera){btn.className='c-btn otra';btn.querySelector('.txt').textContent='Repetir';}
+  }
+  var ESPERA=3, INTRO=4500, espera=null, intro=null, ciclo=true;
+  function cancelarEspera(){ if(espera){clearInterval(espera);espera=null;} if(intro){clearTimeout(intro);intro=null;} }
+  function programarReinicio(){
+    cancelarEspera(); var n=ESPERA;
+    var txt=btn.querySelector('.txt'); btn.className='c-btn otra'; txt.innerHTML='Repetir <span class="cuenta">'+n+'</span>';
+    espera=setInterval(function(){ n--; if(n<=0){ cancelarEspera(); p=0; pintar(false); btn.className='c-btn pausa'; txt.textContent='Pausar'; intro=setTimeout(function(){ intro=null; iniciar(); },INTRO); } else txt.innerHTML='Repetir <span class="cuenta">'+n+'</span>'; },1000);
+  }
+  function paso(ts){ if(!corre)return; var dt=ult?Math.min(.05,(ts-ult)/1000):0; ult=ts; p=Math.min(DUR,p+dt); pintar(true);
+    if(p>=DUR){corre=false; if(ciclo) programarReinicio(); return;} raf=requestAnimationFrame(paso); }
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function iniciar(){ cancelarEspera(); ciclo=true; if(p>=DUR){p=0;pintar(false);} if(reduce){p=DUR;pintar(false);return;}
+    corre=true;ult=0;btn.className='c-btn pausa';btn.querySelector('.txt').textContent='Pausar';raf=requestAnimationFrame(paso); }
+  function pausar(){ cancelarEspera(); ciclo=false; corre=false;cancelAnimationFrame(raf);btn.className='c-btn';btn.querySelector('.txt').textContent='Continuar'; }
+  btn.addEventListener('click',function(){corre?pausar():iniciar();});
+  velo.addEventListener('click',function(){if(!corre)iniciar();}); velo.style.cursor='pointer';
+  rango.addEventListener('input',function(){ cancelarEspera(); ciclo=false; if(corre)pausar(); p=rango.value/1000*DUR; pintar(false);
+    if(p<DUR){btn.className='c-btn';btn.querySelector('.txt').textContent=p>0?'Continuar':'Iniciar';} });
+  document.addEventListener('keydown',function(e){ if(document.body.classList.contains('presentando')&&(e.key==='p'||e.key==='P')){e.preventDefault();corre?pausar():iniciar();} });
+  pintar(false);
+  /* arranque automático: portada 5 s cuando la animación entra en pantalla */
+  var arrancado=false;
+  function autoInicio(){
+    if(arrancado) return; arrancado=true;
+    if(reduce){ p=DUR; pintar(false); return; }
+    btn.className='c-btn pausa'; btn.querySelector('.txt').textContent='Pausar';
+    intro=setTimeout(function(){ intro=null; if(!corre&&p===0) iniciar(); },5000);
+  }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es,ob){ es.forEach(function(e){ if(e.isIntersecting){ ob.disconnect(); autoInicio(); } }); },{threshold:0.4}).observe(car);
+  } else { autoInicio(); }
+})();
+</script>
+</body>
+</html>
