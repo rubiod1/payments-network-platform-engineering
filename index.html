@@ -328,6 +328,20 @@ body.presentando .ayuda{display:block}
 .dg .nb{font-family:'Archivo',sans-serif;font-size:12px;font-weight:800;fill:#0D2138;text-anchor:middle}
 .dg .fl{fill:none;stroke:var(--d-line);stroke-width:1.8;marker-end:url(#poc-fl)}
 .dg .fa{fill:none;stroke:var(--d-amber);stroke-width:1.3;stroke-dasharray:6 4}
+figure.dgf .nd{cursor:pointer;outline:none;transform-box:fill-box}
+figure.dgf .nd .b{transition:stroke .15s,fill .15s}
+figure.dgf .nd:hover .b,figure.dgf .nd:focus-visible .b,figure.dgf .nd.sel .b{stroke:var(--d-amber);stroke-width:2.6;fill:#173a60}
+figure.dgf.anim .nd,figure.dgf.anim .ar{opacity:0}
+figure.dgf.anim.play .nd{animation:dgIn .5s ease forwards;animation-delay:calc(var(--i)*.15s)}
+figure.dgf.anim.play .ar{animation:dgFade .4s ease forwards;animation-delay:calc(var(--i)*.15s + .12s)}
+@keyframes dgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes dgFade{to{opacity:1}}
+.dg-bar{display:flex;gap:14px;align-items:stretch;margin-top:10px}
+.dg-info{flex:1;margin:0;padding:10px 14px;background:var(--panel);border-left:3px solid var(--cyan);font-size:14.5px;min-height:3.4em}
+.dg-info b{color:var(--ink)}
+.dg-replay{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:0 14px;cursor:pointer}
+.dg-replay:hover{background:var(--ink);color:#fff}
+@media print{figure.dgf .nd,figure.dgf .ar{opacity:1!important;animation:none!important;transform:none!important}.dg-bar{display:none}}
 .dg .l{stroke:var(--d-line);stroke-width:1.6;fill:none}
 .dg .ld{stroke:var(--d-line);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
 .dg .la{stroke:var(--d-amber);stroke-width:1.6;fill:none}
@@ -943,46 +957,78 @@ body.presentando .ayuda{display:block}
 
     <div class="bloque" data-parada="IV · Del formulario al pod">
       <h3><span class="req">Flujo de la prueba de concepto</span>Los pasos de la plantilla y lo que ocurre después hasta la base de datos</h3>
-      <figure class="fig">
-        <svg class="dg" viewBox="0 0 1200 448" role="img" aria-label="Flujo horizontal: siete pasos de la plantilla de Backstage y cinco pasos de la plataforma hasta el pod conectado a la base de datos">
+      <figure class="fig dgf" id="dg-flow">
+        <svg class="dg" viewBox="0 0 1200 448" role="group" aria-label="Flujo horizontal: siete pasos de la plantilla de Backstage y cinco pasos de la plataforma hasta el pod conectado a la base de datos">
         <defs><marker id="poc-fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56D6E8"/></marker></defs>
         <rect width="1200" height="448" fill="#0D2138"/>
         <rect class="zonac" x="24" y="20" width="1152" height="168" rx="6"/>
         <text class="tl" x="42" y="42">BACKSTAGE · PLANTILLA «MICROSERVICIO CON POSTGRESQL»</text>
         <text class="ta" x="1158" y="42" text-anchor="end">7 pasos · ≈ 1 min 24 s</text>
-        <rect class="b" x="42" y="60" width="144" height="100" rx="5"/><circle cx="56" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="56" y="64">1</text><text class="t" x="114.0" y="100" text-anchor="middle">Validar equipo</text><text class="t" x="114.0" y="117" text-anchor="middle">y contrato</text><text class="ts" x="114.0" y="148" text-anchor="middle">0 s</text>
-        <path class="fl" d="M186 110 H201"/>
-        <rect class="b" x="204" y="60" width="144" height="100" rx="5"/><circle cx="218" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="218" y="64">2</text><text class="t" x="276.0" y="100" text-anchor="middle">Preparar tu</text><text class="t" x="276.0" y="117" text-anchor="middle">microservicio</text><text class="ts" x="276.0" y="148" text-anchor="middle">0 s</text>
-        <path class="fl" d="M348 110 H363"/>
-        <rect class="b" x="366" y="60" width="144" height="100" rx="5"/><circle cx="380" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="380" y="64">3</text><text class="t" x="438.0" y="100" text-anchor="middle">Crear repositorio</text><text class="t" x="438.0" y="117" text-anchor="middle">privado</text><text class="ts" x="438.0" y="148" text-anchor="middle">5 s</text>
-        <path class="fl" d="M510 110 H525"/>
-        <rect class="b" x="528" y="60" width="144" height="100" rx="5"/><circle cx="542" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="542" y="64">4</text><text class="t" x="600.0" y="94" text-anchor="middle">Preparar</text><text class="t" x="600.0" y="111" text-anchor="middle">solicitud de</text><text class="t" x="600.0" y="128" text-anchor="middle">infraestructura</text><text class="ts" x="600.0" y="148" text-anchor="middle">0 s</text>
-        <path class="fl" d="M672 110 H687"/>
-        <rect class="b" x="690" y="60" width="144" height="100" rx="5"/><circle cx="704" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="704" y="64">5</text><text class="t" x="762.0" y="100" text-anchor="middle">Validar cambios</text><text class="t" x="762.0" y="117" text-anchor="middle">en GitOps</text><text class="ts" x="762.0" y="148" text-anchor="middle">4 s</text>
-        <path class="fl" d="M834 110 H849"/>
-        <rect class="b" x="852" y="60" width="144" height="100" rx="5"/><circle cx="866" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="866" y="64">6</text><text class="t" x="924.0" y="94" text-anchor="middle">Activar</text><text class="t" x="924.0" y="111" text-anchor="middle">reconciliación</text><text class="t" x="924.0" y="128" text-anchor="middle">automática</text><text class="ts" x="924.0" y="148" text-anchor="middle">1 min 15 s</text>
-        <path class="fl" d="M996 110 H1011"/>
-        <rect class="b" x="1014" y="60" width="144" height="100" rx="5"/><circle cx="1028" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="1028" y="64">7</text><text class="t" x="1086.0" y="94" text-anchor="middle">Registrar</text><text class="t" x="1086.0" y="111" text-anchor="middle">servicio en</text><text class="t" x="1086.0" y="128" text-anchor="middle">el catálogo</text><text class="ts" x="1086.0" y="148" text-anchor="middle">0 s</text>
-        <path class="fl" d="M924 160 V212 H140 V262"/>
-        <text class="ts" x="532" y="206" text-anchor="middle">el cambio queda en el repositorio GitOps y Argo CD lo toma</text>
+        <g class="nd" tabindex="0" role="button" data-n="1" data-t="Validar equipo y contrato" data-d="Comprueba que el equipo dueño existe y que los datos del formulario cumplen el contrato de la plantilla." aria-label="1. Validar equipo y contrato" style="--i:0"><title>1 · Validar equipo y contrato</title><rect class="b" x="42" y="60" width="144" height="100" rx="5"/><circle cx="56" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="56" y="64">1</text><text class="t" x="114.0" y="100" text-anchor="middle">Validar equipo</text><text class="t" x="114.0" y="117" text-anchor="middle">y contrato</text><text class="ts" x="114.0" y="148" text-anchor="middle">0 s</text></g>
+        <path class="fl ar" style="--i:0" d="M186 110 H201"/>
+        <g class="nd" tabindex="0" role="button" data-n="2" data-t="Preparar tu microservicio" data-d="Genera el esqueleto del servicio a partir de la plantilla, con los valores que llenó el desarrollador." aria-label="2. Preparar tu microservicio" style="--i:1"><title>2 · Preparar tu microservicio</title><rect class="b" x="204" y="60" width="144" height="100" rx="5"/><circle cx="218" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="218" y="64">2</text><text class="t" x="276.0" y="100" text-anchor="middle">Preparar tu</text><text class="t" x="276.0" y="117" text-anchor="middle">microservicio</text><text class="ts" x="276.0" y="148" text-anchor="middle">0 s</text></g>
+        <path class="fl ar" style="--i:1" d="M348 110 H363"/>
+        <g class="nd" tabindex="0" role="button" data-n="3" data-t="Crear repositorio privado" data-d="Publica el código base en un repositorio privado de GitHub. En la prueba tardó 5 segundos." aria-label="3. Crear repositorio privado" style="--i:2"><title>3 · Crear repositorio privado</title><rect class="b" x="366" y="60" width="144" height="100" rx="5"/><circle cx="380" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="380" y="64">3</text><text class="t" x="438.0" y="100" text-anchor="middle">Crear repositorio</text><text class="t" x="438.0" y="117" text-anchor="middle">privado</text><text class="ts" x="438.0" y="148" text-anchor="middle">5 s</text></g>
+        <path class="fl ar" style="--i:2" d="M510 110 H525"/>
+        <g class="nd" tabindex="0" role="button" data-n="4" data-t="Preparar solicitud de infraestructura" data-d="Arma el cambio para el repositorio GitOps: el namespace, la base PostgreSQL y el registro del servicio." aria-label="4. Preparar solicitud de infraestructura" style="--i:3"><title>4 · Preparar solicitud de infraestructura</title><rect class="b" x="528" y="60" width="144" height="100" rx="5"/><circle cx="542" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="542" y="64">4</text><text class="t" x="600.0" y="94" text-anchor="middle">Preparar</text><text class="t" x="600.0" y="111" text-anchor="middle">solicitud de</text><text class="t" x="600.0" y="128" text-anchor="middle">infraestructura</text><text class="ts" x="600.0" y="148" text-anchor="middle">0 s</text></g>
+        <path class="fl ar" style="--i:3" d="M672 110 H687"/>
+        <g class="nd" tabindex="0" role="button" data-n="5" data-t="Validar cambios en GitOps" data-d="Valida el cambio en el repositorio GitOps antes de que se aplique. Tardó 4 segundos." aria-label="5. Validar cambios en GitOps" style="--i:4"><title>5 · Validar cambios en GitOps</title><rect class="b" x="690" y="60" width="144" height="100" rx="5"/><circle cx="704" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="704" y="64">5</text><text class="t" x="762.0" y="100" text-anchor="middle">Validar cambios</text><text class="t" x="762.0" y="117" text-anchor="middle">en GitOps</text><text class="ts" x="762.0" y="148" text-anchor="middle">4 s</text></g>
+        <path class="fl ar" style="--i:4" d="M834 110 H849"/>
+        <g class="nd" tabindex="0" role="button" data-n="6" data-t="Activar reconciliación automática" data-d="Deja a Argo CD y Crossplane reconciliando el servicio. Es el paso más largo de la plantilla: 1 min 15 s." aria-label="6. Activar reconciliación automática" style="--i:5"><title>6 · Activar reconciliación automática</title><rect class="b" x="852" y="60" width="144" height="100" rx="5"/><circle cx="866" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="866" y="64">6</text><text class="t" x="924.0" y="94" text-anchor="middle">Activar</text><text class="t" x="924.0" y="111" text-anchor="middle">reconciliación</text><text class="t" x="924.0" y="128" text-anchor="middle">automática</text><text class="ts" x="924.0" y="148" text-anchor="middle">1 min 15 s</text></g>
+        <path class="fl ar" style="--i:5" d="M996 110 H1011"/>
+        <g class="nd" tabindex="0" role="button" data-n="7" data-t="Registrar servicio en el catálogo" data-d="El servicio nace en el catálogo de Backstage con su dueño y el enlace a su repositorio." aria-label="7. Registrar servicio en el catálogo" style="--i:6"><title>7 · Registrar servicio en el catálogo</title><rect class="b" x="1014" y="60" width="144" height="100" rx="5"/><circle cx="1028" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="1028" y="64">7</text><text class="t" x="1086.0" y="94" text-anchor="middle">Registrar</text><text class="t" x="1086.0" y="111" text-anchor="middle">servicio en</text><text class="t" x="1086.0" y="128" text-anchor="middle">el catálogo</text><text class="ts" x="1086.0" y="148" text-anchor="middle">0 s</text></g>
+        <path class="fl ar" style="--i:6" d="M924 160 V212 H140 V262"/>
+        <text class="ts ar" style="--i:6" x="532" y="206" text-anchor="middle">el cambio queda en el repositorio GitOps y Argo CD lo toma</text>
         <rect class="zonac" x="24" y="226" width="1152" height="206" rx="6"/>
         <text class="tl" x="172" y="250">PLATAFORMA · ARGO CD · CROSSPLANE · EKS</text>
         <text class="ta" x="1158" y="250" text-anchor="end">sin intervención del desarrollador</text>
-        <rect class="b" x="45" y="264" width="190" height="100" rx="5"/><circle cx="59" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="59" y="268">8</text><text class="t" x="140.0" y="304" text-anchor="middle">Argo CD sincroniza</text><text class="t" x="140.0" y="321" text-anchor="middle">las 2 Applications</text><text class="ts" x="140.0" y="352" text-anchor="middle">infra + servicio · GitOps</text>
-        <path class="fl" d="M235 314 H272"/>
-        <rect class="b" x="275" y="264" width="190" height="100" rx="5"/><circle cx="289" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="289" y="268">9</text><text class="t" x="370.0" y="304" text-anchor="middle">Crossplane crea</text><text class="t" x="370.0" y="321" text-anchor="middle">la base en RDS</text><text class="ts" x="370.0" y="338" text-anchor="middle">Creating → Available</text><text class="ts" x="370.0" y="352" text-anchor="middle">≈ 5 min</text>
-        <path class="fl" d="M465 314 H502"/>
-        <rect class="b" x="505" y="264" width="190" height="100" rx="5"/><circle cx="519" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="519" y="268">10</text><text class="t" x="600.0" y="304" text-anchor="middle">Se publica el Secret</text><text class="t" x="600.0" y="321" text-anchor="middle">de conexión</text><text class="tc" x="600.0" y="352" text-anchor="middle">gp-piloto-pagos-connection</text>
-        <path class="fl" d="M695 314 H732"/>
-        <rect class="b" x="735" y="264" width="190" height="100" rx="5"/><circle cx="749" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="749" y="268">11</text><text class="t" x="830.0" y="304" text-anchor="middle">Arranca el pod</text><text class="t" x="830.0" y="321" text-anchor="middle">del microservicio</text><text class="ta" x="830.0" y="352" text-anchor="middle">ConfigError → Running</text>
-        <path class="fl" d="M925 314 H962"/>
-        <rect class="b" x="965" y="264" width="190" height="100" rx="5"/><circle cx="979" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="979" y="268">12</text><text class="t" x="1060.0" y="304" text-anchor="middle">Servicio y base</text><text class="t" x="1060.0" y="321" text-anchor="middle">Healthy en Argo CD</text><text class="tc" x="1060.0" y="352" text-anchor="middle">visibles en el catálogo</text>
-        <path class="fa" d="M505 376 v10 H925 v-10"/>
-        <text class="ta" x="715" y="406" text-anchor="middle">Sin el Secret, el pod falla con CreateContainerConfigError</text>
-        <text class="ta" x="715" y="422" text-anchor="middle">y se recupera en cuanto la base queda Available</text>
+        <g class="nd" tabindex="0" role="button" data-n="8" data-t="Argo CD sincroniza las 2 Applications" data-d="Sincroniza las dos Applications: la de infraestructura y la del servicio. Ambas pasan por Progressing hasta quedar Healthy." aria-label="8. Argo CD sincroniza las 2 Applications" style="--i:7"><title>8 · Argo CD sincroniza las 2 Applications</title><rect class="b" x="45" y="264" width="190" height="100" rx="5"/><circle cx="59" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="59" y="268">8</text><text class="t" x="140.0" y="304" text-anchor="middle">Argo CD sincroniza</text><text class="t" x="140.0" y="321" text-anchor="middle">las 2 Applications</text><text class="ts" x="140.0" y="352" text-anchor="middle">infra + servicio · GitOps</text></g>
+        <path class="fl ar" style="--i:7" d="M235 314 H272"/>
+        <g class="nd" tabindex="0" role="button" data-n="9" data-t="Crossplane crea la base en RDS" data-d="Crea la instancia PostgreSQL en RDS. Pasa por Creating y Backing up antes de quedar Available: unos 5 minutos." aria-label="9. Crossplane crea la base en RDS" style="--i:8"><title>9 · Crossplane crea la base en RDS</title><rect class="b" x="275" y="264" width="190" height="100" rx="5"/><circle cx="289" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="289" y="268">9</text><text class="t" x="370.0" y="304" text-anchor="middle">Crossplane crea</text><text class="t" x="370.0" y="321" text-anchor="middle">la base en RDS</text><text class="ts" x="370.0" y="338" text-anchor="middle">Creating → Available</text><text class="ts" x="370.0" y="352" text-anchor="middle">≈ 5 min</text></g>
+        <path class="fl ar" style="--i:8" d="M465 314 H502"/>
+        <g class="nd" tabindex="0" role="button" data-n="10" data-t="Se publica el Secret de conexión" data-d="Cuando la base existe, se publica el Secret gp-piloto-pagos-connection con los datos de conexión que lee el servicio." aria-label="10. Se publica el Secret de conexión" style="--i:9"><title>10 · Se publica el Secret de conexión</title><rect class="b" x="505" y="264" width="190" height="100" rx="5"/><circle cx="519" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="519" y="268">10</text><text class="t" x="600.0" y="304" text-anchor="middle">Se publica el Secret</text><text class="t" x="600.0" y="321" text-anchor="middle">de conexión</text><text class="tc" x="600.0" y="352" text-anchor="middle">gp-piloto-pagos-connection</text></g>
+        <path class="fl ar" style="--i:9" d="M695 314 H732"/>
+        <g class="nd" tabindex="0" role="button" data-n="11" data-t="Arranca el pod del microservicio" data-d="El pod falla con CreateContainerConfigError mientras el Secret no existe, y pasa a Running en cuanto la base queda disponible." aria-label="11. Arranca el pod del microservicio" style="--i:10"><title>11 · Arranca el pod del microservicio</title><rect class="b" x="735" y="264" width="190" height="100" rx="5"/><circle cx="749" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="749" y="268">11</text><text class="t" x="830.0" y="304" text-anchor="middle">Arranca el pod</text><text class="t" x="830.0" y="321" text-anchor="middle">del microservicio</text><text class="ta" x="830.0" y="352" text-anchor="middle">ConfigError → Running</text></g>
+        <path class="fl ar" style="--i:10" d="M925 314 H962"/>
+        <g class="nd" tabindex="0" role="button" data-n="12" data-t="Servicio y base Healthy en Argo CD" data-d="Argo CD muestra todo en Healthy y el catálogo de Backstage lista el servicio, ya conectado a su base." aria-label="12. Servicio y base Healthy en Argo CD" style="--i:11"><title>12 · Servicio y base Healthy en Argo CD</title><rect class="b" x="965" y="264" width="190" height="100" rx="5"/><circle cx="979" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="979" y="268">12</text><text class="t" x="1060.0" y="304" text-anchor="middle">Servicio y base</text><text class="t" x="1060.0" y="321" text-anchor="middle">Healthy en Argo CD</text><text class="tc" x="1060.0" y="352" text-anchor="middle">visibles en el catálogo</text></g>
+        <path class="fa ar" style="--i:10" d="M505 376 v10 H925 v-10"/>
+        <text class="ta ar" style="--i:10" x="715" y="406" text-anchor="middle">Sin el Secret, el pod falla con CreateContainerConfigError</text>
+        <text class="ta ar" style="--i:10" x="715" y="422" text-anchor="middle">y se recupera en cuanto la base queda Available</text>
         </svg>
+        <div class="dg-bar">
+          <p class="dg-info" id="dg-info" aria-live="polite">Pasa el cursor o haz clic en un paso para ver qué hace.</p>
+          <button type="button" class="dg-replay" id="dg-replay">↻ Repetir</button>
+        </div>
         <figcaption><b>Carril superior:</b> los siete pasos de la plantilla de Backstage, con el tiempo que tardó cada uno en la prueba. <b>Carril inferior:</b> lo que hace la plataforma después, hasta que el microservicio queda conectado a su base.</figcaption>
       </figure>
+      <script>
+      (function(){
+        var fig=document.getElementById('dg-flow'); if(!fig) return;
+        var info=document.getElementById('dg-info'), def=info.textContent, sel=null;
+        var reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function show(n){
+          info.textContent=''; var b=document.createElement('b');
+          b.textContent=n.getAttribute('data-n')+' · '+n.getAttribute('data-t')+'. ';
+          info.appendChild(b); info.appendChild(document.createTextNode(n.getAttribute('data-d')));
+        }
+        fig.querySelectorAll('.nd').forEach(function(n){
+          n.addEventListener('mouseenter',function(){show(n);});
+          n.addEventListener('focus',function(){show(n);});
+          n.addEventListener('mouseleave',function(){ if(sel) show(sel); else info.textContent=def; });
+          n.addEventListener('click',function(){ if(sel) sel.classList.remove('sel'); sel=n; n.classList.add('sel'); show(n); });
+          n.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); n.click(); } });
+        });
+        var rb=document.getElementById('dg-replay');
+        if(reduce){ rb.style.display='none'; return; }
+        fig.classList.add('anim');
+        function play(){ fig.classList.remove('play'); void fig.offsetWidth; fig.classList.add('play'); }
+        rb.addEventListener('click',play);
+        if('IntersectionObserver' in window){
+          var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ play(); io.disconnect(); } }); },{threshold:.35});
+          io.observe(fig);
+        } else { play(); }
+      })();
+      </script>
     </div>
 
     <div class="bloque" data-parada="IV · Demostración">
