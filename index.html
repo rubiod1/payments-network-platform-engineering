@@ -325,6 +325,9 @@ body.presentando .ayuda{display:block}
 .dg .ba{fill:#2A2A1E;stroke:var(--d-amber);stroke-width:1.6}
 .dg .zona{fill:none;stroke:rgba(157,178,198,.35);stroke-width:1.2}
 .dg .zonac{fill:rgba(86,214,232,.05);stroke:var(--d-line);stroke-width:1.2;stroke-dasharray:3 3}
+.dg .nb{font-family:'Archivo',sans-serif;font-size:12px;font-weight:800;fill:#0D2138;text-anchor:middle}
+.dg .fl{fill:none;stroke:var(--d-line);stroke-width:1.8;marker-end:url(#poc-fl)}
+.dg .fa{fill:none;stroke:var(--d-amber);stroke-width:1.3;stroke-dasharray:6 4}
 .dg .l{stroke:var(--d-line);stroke-width:1.6;fill:none}
 .dg .ld{stroke:var(--d-line);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
 .dg .la{stroke:var(--d-amber);stroke-width:1.6;fill:none}
@@ -461,7 +464,7 @@ body.presentando .ayuda{display:block}
       <li><span class="n">I</span><div><a href="#s1">Diagnóstico socio-técnico y TVP</a><span class="d">Dónde se pierde el tiempo y qué resolvemos primero</span></div></li>
       <li><span class="n">II</span><div><a href="#s2">Diseño arquitectónico: planos y vistas</a><span class="d">Referencia por capas, topología, red Zero-Trust, eventos y ciclo de vida</span></div></li>
       <li><span class="n">III</span><div><a href="#s3">Ecosistema de APIs y Platform 2.0</a><span class="d">Auditoría, servicios del portal y qué entra de la era 2.0</span></div></li>
-      <li><span class="n">IV</span><div><a href="#s4">Prueba de concepto: el primer Golden Path</a><span class="d">«Microservicio con base de datos», manifiestos y evidencia</span></div></li>
+      <li><span class="n">IV</span><div><a href="#s4">Prueba de concepto: el primer Golden Path</a><span class="d">«Microservicio con base de datos»: del formulario al pod, en video</span></div></li>
     </ol>
   </nav>
 </header>
@@ -938,370 +941,61 @@ body.presentando .ayuda{display:block}
     <h2>Prueba de concepto: el primer Golden Path</h2>
     <p class="entrada">«Microservicio con base de datos» reemplaza el ticket de 3 a 4 días por un formulario de cuatro campos. Funciona como un menú de combos: el desarrollador pide «combo 2, tamaño mediano» y la cocina, que es el control plane, ya sabe qué preparar. Recibe un servicio completo (repositorio, namespace, base de datos, credenciales y catálogo) ya corriendo y administrado desde Argo CD. No elige subredes, clases de instancia ni cifrado; esas decisiones ya las tomó Redeban.</p>
 
-    <div class="bloque" data-parada="IV · El recorrido">
-      <h3><span class="req">Implementación del primer Golden Path</span>Qué pasa desde el formulario hasta la base de datos</h3>
-      <p>El desarrollador llena en Backstage: nombre del servicio, equipo dueño, tamaño de la base (pequeña o mediana) y descripción. El ambiente no se elige: siempre es desarrollo.</p>
-      <ol class="pasos">
-        <li><div><h4>Se genera el repositorio</h4><p>La plantilla crea el repositorio en GitHub desde un esqueleto de microservicio: código base que lee el Secret de la base, carpeta <code>deploy/</code> con sus manifiestos, <code>catalog-info.yaml</code> con el dueño y el pipeline de la aplicación.</p><span class="herr">Backstage Software Template</span></div></li>
-        <li><div><h4>Se declara la infraestructura y el registro del servicio</h4><p>La misma plantilla abre un PR en el repositorio GitOps con el namespace, un <code>PostgreSQLInstance</code> que solo dice «tamaño: pequeña» y un pequeño <code>servicio.json</code> que apunta al repositorio del servicio. El PR se fusiona solo cuando pasan los checks de política; el contrato estándar no requiere revisión humana.</p><span class="herr">GitHub · publish:github:pull-request</span></div></li>
-        <li><div><h4>La política valida antes de crear</h4><p>El recurso sin dueño, sin centro de costo o con un tamaño no permitido se rechaza en la admisión, antes de tocar AWS.</p><span class="herr">Kyverno · esquema de la XRD</span></div></li>
-        <li><div><h4>Argo CD crea las dos Applications</h4><p>Un ApplicationSet sincroniza la infraestructura desde el repositorio GitOps y otro crea la Application del servicio leyendo <code>servicio.json</code>. Ambas nacen con <code>selfHeal</code> activado.</p><span class="herr">Argo CD · dos ApplicationSets</span></div></li>
-        <li><div><h4>Crossplane materializa la RDS</h4><p>La Composition traduce «pequeña» a la instancia real con los valores de Redeban: motor, cifrado, respaldos, subred privada y etiquetas. Deja la cadena de conexión como Secret en el namespace del equipo.</p><span class="herr">Crossplane v2 · provider AWS</span></div></li>
-        <li><div><h4>El servicio v0 arranca y conecta</h4><p>Cuando el Secret existe, Argo CD despliega el <code>deploy/</code> del repositorio con la imagen genérica de la plataforma, que se conecta a la base y responde «conectado». El servicio ya corre y ya está administrado.</p><span class="herr">Argo CD · Application del servicio</span></div></li>
-        <li><div><h4>El servicio aparece en el catálogo</h4><p>Sin paso adicional: nace con dueño, enlace a su repositorio y el estado real de su base de datos visible en el portal.</p><span class="herr">Catálogo · plugin Kubernetes</span></div></li>
-        <li><div><h4>El desarrollador toma el control</h4><p>Cambia la imagen en <code>deploy/</code> con un commit y Argo CD sincroniza, sin pedir nada. Construir la imagen sigue siendo del pipeline del equipo.</p><span class="herr">Fin del Golden Path</span></div></li>
-      </ol>
+    <div class="bloque" data-parada="IV · Del formulario al pod">
+      <h3><span class="req">Flujo de la prueba de concepto</span>Los pasos de la plantilla y lo que ocurre después hasta la base de datos</h3>
+      <figure class="fig">
+        <svg class="dg" viewBox="0 0 1200 448" role="img" aria-label="Flujo horizontal: siete pasos de la plantilla de Backstage y cinco pasos de la plataforma hasta el pod conectado a la base de datos">
+        <defs><marker id="poc-fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#56D6E8"/></marker></defs>
+        <rect width="1200" height="448" fill="#0D2138"/>
+        <rect class="zonac" x="24" y="20" width="1152" height="168" rx="6"/>
+        <text class="tl" x="42" y="42">BACKSTAGE · PLANTILLA «MICROSERVICIO CON POSTGRESQL»</text>
+        <text class="ta" x="1158" y="42" text-anchor="end">7 pasos · ≈ 1 min 24 s</text>
+        <rect class="b" x="42" y="60" width="144" height="100" rx="5"/><circle cx="56" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="56" y="64">1</text><text class="t" x="114.0" y="100" text-anchor="middle">Validar equipo</text><text class="t" x="114.0" y="117" text-anchor="middle">y contrato</text><text class="ts" x="114.0" y="148" text-anchor="middle">0 s</text>
+        <path class="fl" d="M186 110 H201"/>
+        <rect class="b" x="204" y="60" width="144" height="100" rx="5"/><circle cx="218" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="218" y="64">2</text><text class="t" x="276.0" y="100" text-anchor="middle">Preparar tu</text><text class="t" x="276.0" y="117" text-anchor="middle">microservicio</text><text class="ts" x="276.0" y="148" text-anchor="middle">0 s</text>
+        <path class="fl" d="M348 110 H363"/>
+        <rect class="b" x="366" y="60" width="144" height="100" rx="5"/><circle cx="380" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="380" y="64">3</text><text class="t" x="438.0" y="100" text-anchor="middle">Crear repositorio</text><text class="t" x="438.0" y="117" text-anchor="middle">privado</text><text class="ts" x="438.0" y="148" text-anchor="middle">5 s</text>
+        <path class="fl" d="M510 110 H525"/>
+        <rect class="b" x="528" y="60" width="144" height="100" rx="5"/><circle cx="542" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="542" y="64">4</text><text class="t" x="600.0" y="94" text-anchor="middle">Preparar</text><text class="t" x="600.0" y="111" text-anchor="middle">solicitud de</text><text class="t" x="600.0" y="128" text-anchor="middle">infraestructura</text><text class="ts" x="600.0" y="148" text-anchor="middle">0 s</text>
+        <path class="fl" d="M672 110 H687"/>
+        <rect class="b" x="690" y="60" width="144" height="100" rx="5"/><circle cx="704" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="704" y="64">5</text><text class="t" x="762.0" y="100" text-anchor="middle">Validar cambios</text><text class="t" x="762.0" y="117" text-anchor="middle">en GitOps</text><text class="ts" x="762.0" y="148" text-anchor="middle">4 s</text>
+        <path class="fl" d="M834 110 H849"/>
+        <rect class="b" x="852" y="60" width="144" height="100" rx="5"/><circle cx="866" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="866" y="64">6</text><text class="t" x="924.0" y="94" text-anchor="middle">Activar</text><text class="t" x="924.0" y="111" text-anchor="middle">reconciliación</text><text class="t" x="924.0" y="128" text-anchor="middle">automática</text><text class="ts" x="924.0" y="148" text-anchor="middle">1 min 15 s</text>
+        <path class="fl" d="M996 110 H1011"/>
+        <rect class="b" x="1014" y="60" width="144" height="100" rx="5"/><circle cx="1028" cy="60" r="11" fill="#56D6E8"/><text class="nb" x="1028" y="64">7</text><text class="t" x="1086.0" y="94" text-anchor="middle">Registrar</text><text class="t" x="1086.0" y="111" text-anchor="middle">servicio en</text><text class="t" x="1086.0" y="128" text-anchor="middle">el catálogo</text><text class="ts" x="1086.0" y="148" text-anchor="middle">0 s</text>
+        <path class="fl" d="M924 160 V212 H140 V262"/>
+        <text class="ts" x="532" y="206" text-anchor="middle">el cambio queda en el repositorio GitOps y Argo CD lo toma</text>
+        <rect class="zonac" x="24" y="226" width="1152" height="206" rx="6"/>
+        <text class="tl" x="172" y="250">PLATAFORMA · ARGO CD · CROSSPLANE · EKS</text>
+        <text class="ta" x="1158" y="250" text-anchor="end">sin intervención del desarrollador</text>
+        <rect class="b" x="45" y="264" width="190" height="100" rx="5"/><circle cx="59" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="59" y="268">8</text><text class="t" x="140.0" y="304" text-anchor="middle">Argo CD sincroniza</text><text class="t" x="140.0" y="321" text-anchor="middle">las 2 Applications</text><text class="ts" x="140.0" y="352" text-anchor="middle">infra + servicio · GitOps</text>
+        <path class="fl" d="M235 314 H272"/>
+        <rect class="b" x="275" y="264" width="190" height="100" rx="5"/><circle cx="289" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="289" y="268">9</text><text class="t" x="370.0" y="304" text-anchor="middle">Crossplane crea</text><text class="t" x="370.0" y="321" text-anchor="middle">la base en RDS</text><text class="ts" x="370.0" y="338" text-anchor="middle">Creating → Available</text><text class="ts" x="370.0" y="352" text-anchor="middle">≈ 5 min</text>
+        <path class="fl" d="M465 314 H502"/>
+        <rect class="b" x="505" y="264" width="190" height="100" rx="5"/><circle cx="519" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="519" y="268">10</text><text class="t" x="600.0" y="304" text-anchor="middle">Se publica el Secret</text><text class="t" x="600.0" y="321" text-anchor="middle">de conexión</text><text class="tc" x="600.0" y="352" text-anchor="middle">gp-piloto-pagos-connection</text>
+        <path class="fl" d="M695 314 H732"/>
+        <rect class="b" x="735" y="264" width="190" height="100" rx="5"/><circle cx="749" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="749" y="268">11</text><text class="t" x="830.0" y="304" text-anchor="middle">Arranca el pod</text><text class="t" x="830.0" y="321" text-anchor="middle">del microservicio</text><text class="ta" x="830.0" y="352" text-anchor="middle">ConfigError → Running</text>
+        <path class="fl" d="M925 314 H962"/>
+        <rect class="b" x="965" y="264" width="190" height="100" rx="5"/><circle cx="979" cy="264" r="11" fill="#56D6E8"/><text class="nb" x="979" y="268">12</text><text class="t" x="1060.0" y="304" text-anchor="middle">Servicio y base</text><text class="t" x="1060.0" y="321" text-anchor="middle">Healthy en Argo CD</text><text class="tc" x="1060.0" y="352" text-anchor="middle">visibles en el catálogo</text>
+        <path class="fa" d="M505 376 v10 H925 v-10"/>
+        <text class="ta" x="715" y="406" text-anchor="middle">Sin el Secret, el pod falla con CreateContainerConfigError</text>
+        <text class="ta" x="715" y="422" text-anchor="middle">y se recupera en cuanto la base queda Available</text>
+        </svg>
+        <figcaption><b>Carril superior:</b> los siete pasos de la plantilla de Backstage, con el tiempo que tardó cada uno en la prueba. <b>Carril inferior:</b> lo que hace la plataforma después, hasta que el microservicio queda conectado a su base.</figcaption>
+      </figure>
     </div>
 
     <div class="bloque" data-parada="IV · Demostración">
       <h3><span class="req">Demostración</span>Del formulario al pod, en 4 minutos</h3>
-      <p>Grabación de la prueba de concepto: el formulario de Backstage, la sincronización de Argo CD, la creación de la RDS con Crossplane y el pod que arranca cuando el Secret existe. Las esperas largas están recortadas.</p>
       <figure class="fig">
         <video controls preload="metadata" playsinline poster="video/poster.jpg"
                style="display:block;width:100%;height:auto;background:#05070d">
           <source src="video/PoC_dinamico.mp4" type="video/mp4">
           Tu navegador no reproduce este video.
         </video>
+        <figcaption>Grabación de la prueba de concepto. Las esperas largas están recortadas y las partes de navegación, aceleradas.</figcaption>
       </figure>
-    </div>
-
-    <div class="bloque" data-parada="IV · Manifiestos">
-      <h3><span class="req">Construcción funcional</span>Las piezas, en código</h3>
-      <p>Extractos de lo que vive en los repositorios de la plataforma. Los nombres de organización y dominios están anonimizados.</p>
-
-      <details class="codigo" open>
-        <summary><span>template.yaml <span class="ds">· plantilla de Backstage</span></span></summary>
-<pre><span class="k">apiVersion:</span> scaffolder.backstage.io/v1beta3
-<span class="k">kind:</span> Template
-<span class="k">metadata:</span>
-  <span class="k">name:</span> microservicio-con-bd
-  <span class="k">title:</span> <span class="s">Microservicio con base de datos</span>
-<span class="k">spec:</span>
-  <span class="k">owner:</span> equipo-plataforma
-  <span class="k">type:</span> service
-  <span class="k">parameters:</span>
-    - <span class="k">title:</span> <span class="s">Tu servicio</span>
-      <span class="k">required:</span> [nombre, equipo, tamano]
-      <span class="k">properties:</span>
-        <span class="k">nombre:</span> { type: string, pattern: <span class="s">'^[a-z][a-z0-9-]{2,30}$'</span> }
-        <span class="k">equipo:</span> { type: string, <span class="s">'ui:field'</span>: OwnerPicker }
-        <span class="k">tamano:</span> { type: string, enum: [pequena, mediana], default: pequena }
-        <span class="k">descripcion:</span> { type: string }
-  <span class="k">steps:</span>
-    - <span class="k">id:</span> codigo
-      <span class="k">action:</span> fetch:template
-      <span class="k">input:</span> { url: ./esqueleto, values: { nombre: <span class="s">${{ parameters.nombre }}</span>, equipo: <span class="s">${{ parameters.equipo }}</span> } }
-    - <span class="k">id:</span> repo
-      <span class="k">action:</span> publish:github
-      <span class="k">input:</span> { repoUrl: <span class="s">github.com?owner=rdb-org&amp;repo=${{ parameters.nombre }}</span> }
-    - <span class="k">id:</span> infra
-      <span class="k">action:</span> fetch:template
-      <span class="k">input:</span> { url: ./infra, targetPath: ./gitops }   <span class="c"># namespace + PostgreSQLInstance + servicio.json</span>
-    - <span class="k">id:</span> pr-gitops
-      <span class="k">action:</span> publish:github:pull-request
-      <span class="k">input:</span>
-        <span class="k">repoUrl:</span> <span class="s">github.com?owner=rdb-org&amp;repo=plataforma-gitops</span>
-        <span class="k">branchName:</span> <span class="s">alta-${{ parameters.nombre }}</span>
-        <span class="k">sourcePath:</span> ./gitops
-        <span class="k">targetPath:</span> <span class="s">equipos/${{ parameters.equipo }}/${{ parameters.nombre }}</span>
-        <span class="k">title:</span> <span class="s">'Alta de ${{ parameters.nombre }} en desarrollo'</span>
-    - <span class="k">id:</span> catalogo
-      <span class="k">action:</span> catalog:register
-      <span class="k">input:</span> { repoContentsUrl: <span class="s">${{ steps.repo.output.repoContentsUrl }}</span>, catalogInfoPath: /catalog-info.yaml }</pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>xrd.yaml <span class="ds">· la API interna que ven los equipos</span></span></summary>
-<pre><span class="k">apiVersion:</span> apiextensions.crossplane.io/v2
-<span class="k">kind:</span> CompositeResourceDefinition
-<span class="k">metadata:</span>
-  <span class="k">name:</span> postgresqlinstances.plataforma.rdb.io
-<span class="k">spec:</span>
-  <span class="k">group:</span> plataforma.rdb.io
-  <span class="k">names:</span> { kind: PostgreSQLInstance, plural: postgresqlinstances }
-  <span class="k">scope:</span> Namespaced            <span class="c"># Crossplane v2: el recurso vive en el namespace del equipo</span>
-  <span class="k">versions:</span>
-    - <span class="k">name:</span> v1alpha1
-      <span class="k">served:</span> true
-      <span class="k">referenceable:</span> true
-      <span class="k">schema:</span>
-        <span class="k">openAPIV3Schema:</span>
-          <span class="k">type:</span> object
-          <span class="k">properties:</span>
-            <span class="k">spec:</span>
-              <span class="k">type:</span> object
-              <span class="k">required:</span> [tamano]
-              <span class="k">properties:</span>
-                <span class="k">tamano:</span> { type: string, enum: [pequena, mediana] }   <span class="c"># «grande» se rechaza aquí</span></pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>composition.yaml <span class="ds">· lo que Redeban ya decidió</span></span></summary>
-<pre><span class="k">apiVersion:</span> apiextensions.crossplane.io/v1
-<span class="k">kind:</span> Composition
-<span class="k">metadata:</span>
-  <span class="k">name:</span> postgresql-aws-dev
-<span class="k">spec:</span>
-  <span class="k">compositeTypeRef:</span> { apiVersion: plataforma.rdb.io/v1alpha1, kind: PostgreSQLInstance }
-  <span class="k">mode:</span> Pipeline
-  <span class="k">pipeline:</span>
-    - <span class="k">step:</span> recursos
-      <span class="k">functionRef:</span> { name: function-patch-and-transform }
-      <span class="k">input:</span>
-        <span class="k">apiVersion:</span> pt.fn.crossplane.io/v1beta1
-        <span class="k">kind:</span> Resources
-        <span class="k">resources:</span>
-          - <span class="k">name:</span> rds
-            <span class="k">base:</span>
-              <span class="k">apiVersion:</span> rds.aws.m.upbound.io/v1beta1
-              <span class="k">kind:</span> Instance
-              <span class="k">spec:</span>
-                <span class="k">forProvider:</span>
-                  <span class="k">region:</span> us-east-1
-                  <span class="k">engine:</span> postgres
-                  <span class="k">engineVersion:</span> <span class="s">"16"</span>
-                  <span class="k">instanceClass:</span> db.t4g.micro
-                  <span class="k">allocatedStorage:</span> 20
-                  <span class="k">storageEncrypted:</span> true
-                  <span class="k">publiclyAccessible:</span> false
-                  <span class="k">backupRetentionPeriod:</span> 7
-                  <span class="k">dbSubnetGroupName:</span> datos-dev
-                  <span class="k">username:</span> app
-                  <span class="k">autoGeneratePassword:</span> true
-                  <span class="k">passwordSecretRef:</span> { name: rds-pass, key: password }
-                  <span class="c"># + security group del namespace y etiquetas (omitidos)</span>
-                <span class="k">writeConnectionSecretToRef:</span> { name: bd-conexion }
-            <span class="k">patches:</span>
-              - <span class="k">type:</span> FromCompositeFieldPath
-                <span class="k">fromFieldPath:</span> spec.tamano
-                <span class="k">toFieldPath:</span> spec.forProvider.instanceClass
-                <span class="k">transforms:</span>
-                  - { type: map, map: { pequena: db.t4g.micro, mediana: db.t4g.small } }</pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>bd.yaml <span class="ds">· lo único que escribe la plantilla</span></span></summary>
-<pre><span class="k">apiVersion:</span> plataforma.rdb.io/v1alpha1
-<span class="k">kind:</span> PostgreSQLInstance
-<span class="k">metadata:</span>
-  <span class="k">name:</span> conciliacion-bd
-  <span class="k">namespace:</span> conciliacion
-  <span class="k">labels:</span>
-    <span class="k">plataforma.rdb.io/owner:</span> equipo-conciliacion
-    <span class="k">plataforma.rdb.io/cost-center:</span> cc-0000
-    <span class="k">backstage.io/kubernetes-id:</span> conciliacion
-<span class="k">spec:</span>
-  <span class="k">tamano:</span> pequena</pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>deploy/deployment.yaml <span class="ds">· servicio v0 en el repo del equipo</span></span></summary>
-<pre><span class="k">apiVersion:</span> apps/v1
-<span class="k">kind:</span> Deployment
-<span class="k">metadata:</span> { name: conciliacion }
-<span class="k">spec:</span>
-  <span class="k">replicas:</span> 1
-  <span class="k">selector:</span> { matchLabels: { app: conciliacion } }
-  <span class="k">template:</span>
-    <span class="k">metadata:</span> { labels: { app: conciliacion } }
-    <span class="k">spec:</span>
-      <span class="k">containers:</span>
-        - <span class="k">name:</span> conciliacion
-          <span class="k">image:</span> <span class="s">registro.rdb.io/plataforma/verificador-bd:1</span>   <span class="c"># v0: imagen genérica; el primer commit del equipo la cambia</span>
-          <span class="k">envFrom:</span> [ { secretRef: { name: bd-conexion } } ]     <span class="c"># el Secret que dejó Crossplane</span>
-          <span class="k">readinessProbe:</span> { httpGet: { path: /ok, port: 8080 } }  <span class="c"># hace SELECT 1 contra la base</span></pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>servicio.json <span class="ds">· lo que enlaza el servicio con Argo CD</span></span></summary>
-<pre>{
-  <span class="k">"servicio"</span>: <span class="s">"conciliacion"</span>,
-  <span class="k">"repoURL"</span>: <span class="s">"https://github.com/rdb-org/conciliacion"</span>
-}   <span class="c"># vive en plataforma-gitops/equipos/equipo-conciliacion/conciliacion/</span></pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>politica-bd.yaml <span class="ds">· Kyverno</span></span></summary>
-<pre><span class="k">apiVersion:</span> kyverno.io/v1
-<span class="k">kind:</span> ClusterPolicy
-<span class="k">metadata:</span> { name: bd-requiere-dueno-y-costo }
-<span class="k">spec:</span>
-  <span class="k">rules:</span>
-    - <span class="k">name:</span> etiquetas-obligatorias
-      <span class="k">match:</span>
-        <span class="k">any:</span>
-          - <span class="k">resources:</span> { kinds: [plataforma.rdb.io/v1alpha1/PostgreSQLInstance] }
-      <span class="k">validate:</span>
-        <span class="k">failureAction:</span> Enforce
-        <span class="k">message:</span> <span class="s">"Toda base de datos necesita dueño y centro de costo."</span>
-        <span class="k">pattern:</span>
-          <span class="k">metadata:</span>
-            <span class="k">labels:</span>
-              <span class="k">plataforma.rdb.io/owner:</span> <span class="s">"?*"</span>
-              <span class="k">plataforma.rdb.io/cost-center:</span> <span class="s">"?*"</span></pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>applicationsets.yaml <span class="ds">· Argo CD administra infraestructura y servicio</span></span></summary>
-<pre><span class="c"># 1) Infraestructura: la edita solo la plantilla</span>
-<span class="k">apiVersion:</span> argoproj.io/v1alpha1
-<span class="k">kind:</span> ApplicationSet
-<span class="k">metadata:</span> { name: equipos-infra, namespace: argocd }
-<span class="k">spec:</span>
-  <span class="k">generators:</span>
-    - <span class="k">git:</span>
-        <span class="k">repoURL:</span> https://github.com/rdb-org/plataforma-gitops
-        <span class="k">revision:</span> main
-        <span class="k">directories:</span> [ { path: <span class="s">"equipos/*/*"</span> } ]
-  <span class="k">template:</span>
-    <span class="k">metadata:</span> { name: <span class="s">'{{path.basename}}-infra'</span> }
-    <span class="k">spec:</span>
-      <span class="k">project:</span> equipos
-      <span class="k">source:</span>
-        <span class="k">repoURL:</span> https://github.com/rdb-org/plataforma-gitops
-        <span class="k">targetRevision:</span> main
-        <span class="k">path:</span> <span class="s">'{{path}}'</span>
-        <span class="k">directory:</span> { exclude: <span class="s">'servicio.json'</span> }
-      <span class="k">destination:</span> { server: https://kubernetes.default.svc, namespace: <span class="s">'{{path.basename}}'</span> }
-      <span class="k">syncPolicy:</span>
-        <span class="k">automated:</span> { prune: true, selfHeal: true }   <span class="c"># selfHeal es la mitad de F3</span>
----
-<span class="c"># 2) Servicio: lee el deploy/ del repositorio del propio equipo</span>
-<span class="k">apiVersion:</span> argoproj.io/v1alpha1
-<span class="k">kind:</span> ApplicationSet
-<span class="k">metadata:</span> { name: equipos-servicios, namespace: argocd }
-<span class="k">spec:</span>
-  <span class="k">generators:</span>
-    - <span class="k">git:</span>
-        <span class="k">repoURL:</span> https://github.com/rdb-org/plataforma-gitops
-        <span class="k">revision:</span> main
-        <span class="k">files:</span> [ { path: <span class="s">"equipos/*/*/servicio.json"</span> } ]
-  <span class="k">template:</span>
-    <span class="k">metadata:</span> { name: <span class="s">'{{servicio}}'</span> }
-    <span class="k">spec:</span>
-      <span class="k">project:</span> equipos
-      <span class="k">source:</span> { repoURL: <span class="s">'{{repoURL}}'</span>, targetRevision: main, path: deploy }
-      <span class="k">destination:</span> { server: https://kubernetes.default.svc, namespace: <span class="s">'{{servicio}}'</span> }
-      <span class="k">syncPolicy:</span>
-        <span class="k">automated:</span> { prune: true, selfHeal: true }</pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>appproject-equipos.yaml <span class="ds">· qué puede y qué no puede tocar un equipo</span></span></summary>
-<pre><span class="k">apiVersion:</span> argoproj.io/v1alpha1
-<span class="k">kind:</span> AppProject
-<span class="k">metadata:</span> { name: equipos, namespace: argocd }
-<span class="k">spec:</span>
-  <span class="k">sourceRepos:</span>
-    - https://github.com/rdb-org/plataforma-gitops   <span class="c"># infraestructura</span>
-    - https://github.com/rdb-org/*                    <span class="c"># repositorios de servicios</span>
-  <span class="k">destinations:</span>
-    - { server: https://kubernetes.default.svc, namespace: <span class="s">'*'</span> }   <span class="c"># acotado por el ApplicationSet a un namespace por equipo</span>
-  <span class="k">namespaceResourceWhitelist:</span>
-    - { group: apps, kind: Deployment }
-    - { group: <span class="s">""</span>, kind: Service }
-    - { group: plataforma.rdb.io, kind: PostgreSQLInstance }
-  <span class="k">clusterResourceWhitelist:</span>
-    - { group: <span class="s">""</span>, kind: Namespace }</pre>
-      </details>
-
-      <details class="codigo">
-        <summary><span>Estructura de repositorios</span></summary>
-<pre>infra-terraform/          <span class="c"># cimientos: vpc, eks, iam, rds-backstage, api-gateway</span>
-plataforma-gitops/
-├── bootstrap/            <span class="c"># app of apps: la raíz que Argo CD sincroniza primero</span>
-├── plataforma/
-│   ├── backstage/        <span class="c"># chart + templates/microservicio-con-bd</span>
-│   ├── crossplane/       <span class="c"># providers, functions, xrd.yaml, composition.yaml</span>
-│   ├── kyverno/          <span class="c"># politica-bd.yaml y pruebas</span>
-│   ├── istio/            <span class="c"># ambient, ingress, AuthorizationPolicy</span>
-│   └── external-secrets/
-└── equipos/              <span class="c"># aquí escribe solo la plantilla</span>
-    └── equipo-conciliacion/
-        └── conciliacion/
-            ├── namespace.yaml
-            ├── bd.yaml
-            └── servicio.json    <span class="c"># enlaza con el repo del servicio</span>
-
-conciliacion/             <span class="c"># repo del equipo: lo edita el equipo</span>
-├── src/
-├── deploy/               <span class="c"># Argo CD lo sincroniza</span>
-│   └── deployment.yaml   <span class="c"># v0: imagen genérica que conecta a la BD</span>
-└── catalog-info.yaml
-</pre>
-      </details>
-    </div>
-
-    <div class="bloque" data-parada="IV · Evidencia de autoservicio">
-      <h3><span class="req">Evidencia de autoservicio</span>Cómo demostramos que el ticket desaparece</h3>
-      <div class="tabla">
-        <table>
-          <caption>Pruebas de aceptación de la PoC</caption>
-          <thead><tr><th>Prueba</th><th>Qué se hace</th><th>Criterio</th><th>Evidencia</th></tr></thead>
-          <tbody>
-            <tr><td>Tiempo</td><td>Llenar el formulario con cronómetro visible.</td><td>Servicio respondiendo en menos de 15 minutos.</td><td>Video</td></tr>
-            <tr><td>Servicio</td><td>Abrir la URL interna del servicio v0.</td><td>Responde «conectado a la base de datos» sin credenciales manuales.</td><td>Captura</td></tr>
-            <tr><td>Autonomía</td><td>Cambiar la imagen en <code>deploy/</code> con un commit.</td><td>Argo CD sincroniza y el servicio se actualiza sin pedir nada.</td><td>Video</td></tr>
-            <tr><td>Cero tickets</td><td>Recorrer el flujo sin intervención del proveedor.</td><td>Ninguna acción manual fuera del formulario.</td><td>Video</td></tr>
-            <tr><td>Drift</td><td>Cambiar en la consola de AWS la retención de respaldos.</td><td>Revertido sin operador en el siguiente ciclo.</td><td>Captura antes y después</td></tr>
-            <tr><td>Catálogo</td><td>Buscar el servicio recién creado en Backstage.</td><td>Aparece con dueño, repo y estado de la BD.</td><td>Captura</td></tr>
-            <tr><td>Política</td><td>Enviar una base sin centro de costo y otra «grande».</td><td>Ambas rechazadas con mensaje claro.</td><td>Captura del rechazo</td></tr>
-            <tr><td>Reproducible</td><td>Destruir y recrear todo desde los repositorios.</td><td>El entorno vuelve igual sin pasos manuales.</td><td>Repositorio</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="dos">
-        <div class="fuera">
-          <h4>Antes · flujo por ticket</h4>
-          <ul>
-            <li>Redactar solicitud al proveedor y esperar la cola.</li>
-            <li>Aprobaciones en serie y ajustes por correo.</li>
-            <li>Credenciales entregadas a mano.</li>
-            <li>Cambios posteriores por consola, sin traza en Git.</li>
-            <li>3 a 4 días hábiles por recurso.</li>
-          </ul>
-        </div>
-        <div>
-          <h4>Después · Golden Path</h4>
-          <ul>
-            <li>Cuatro campos en Backstage y un servicio que responde.</li>
-            <li>Política aplicada en la admisión, no en una reunión.</li>
-            <li>Credenciales como Secret en el namespace.</li>
-            <li>Todo cambio pasa por Git; el drift se revierte solo.</li>
-            <li>Alrededor de 10 minutos.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="bloque" data-parada="IV · Costo de la PoC">
-      <h3><span class="req">Viabilidad del entorno</span>Cuánto cuesta la PoC en AWS</h3>
-      <div class="tabla">
-        <table>
-          <caption>Costo aproximado por hora · us-east-1 · validar con la calculadora de AWS</caption>
-          <thead><tr><th>Componente</th><th>Configuración</th><th>USD / hora</th></tr></thead>
-          <tbody>
-            <tr><td>EKS control plane</td><td>Un clúster</td><td class="num">0,100</td></tr>
-            <tr><td>Nodos</td><td>2 × t3.medium</td><td class="num">0,083</td></tr>
-            <tr><td>NAT Gateway</td><td>Uno, sin contar tráfico</td><td class="num">0,045</td></tr>
-            <tr><td>NLB interno</td><td>Uno</td><td class="num">0,023</td></tr>
-            <tr><td>RDS</td><td>2 × db.t4g.micro (Backstage y piloto)</td><td class="num">0,032</td></tr>
-            <tr class="destacada"><td>Total</td><td>Sin almacenamiento ni transferencia</td><td class="num"><b>≈ 0,28</b></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>Encendida todo el mes, la PoC cuesta alrededor de USD 200. Encendida solo para trabajar (unas 160 horas en total) y destruida con <code>terraform destroy</code> entre sesiones, queda cerca de USD 45, dentro del presupuesto estimado de USD 50. La cuenta usa alertas de AWS Budgets y accesos individuales por IAM Identity Center, nunca credenciales compartidas.</p>
-    </div>
-
-    <div class="bloque" data-parada="IV · Pendientes">
-      <h3><span class="req">Antes de la sustentación</span>Decisiones que el equipo debe cerrar</h3>
-      <ul class="lista-l">
-        <li><b>Techo de la delegación de permisos.</b>Hasta dónde cede el proveedor el rol que usa Crossplane. Es la única respuesta que puede obligar a rediseñar la TVP.</li>
-        <li><b>Imagen genérica.</b>Alguien debe construir y publicar en el registro la imagen que usa el servicio v0, y definir cómo se versiona.</li>
-        <li><b>Equipo piloto.</b>Elegir un equipo que ya sufra la espera y tenga un servicio real por arrancar dentro de la ventana del proyecto.</li>
-        <li><b>Contrato de la base de datos.</b>Versión del motor, tamaños, política de respaldo y quién asume el costo del recurso autoservido.</li>
-        <li><b>Rúbrica.</b>Contrastar cada sección con la rúbrica publicada en Bloque Neón.</li>
-      </ul>
+      <p>El video recorre la prueba de punta a punta. El desarrollador llena el formulario de Backstage con cuatro campos y los siete pasos de la plantilla terminan en menos de dos minutos: quedan creados el repositorio, la solicitud GitOps y el registro en el catálogo. Después Argo CD sincroniza las dos Applications y Crossplane crea la instancia PostgreSQL en RDS, que tarda cerca de cinco minutos en pasar de <i>Creating</i> a <i>Available</i>. Lo más revelador ocurre en el medio: el pod del microservicio falla con <code>CreateContainerConfigError</code> porque el Secret de conexión todavía no existe, y se recupera en cuanto la base queda disponible, sin que nadie intervenga. Al final el servicio y su base aparecen <i>Healthy</i> en Argo CD y en el catálogo, sin haber abierto un ticket.</p>
     </div>
 
     <p class="cita">La plataforma no le quita trabajo al proveedor: le quita la espera al desarrollador.</p>
